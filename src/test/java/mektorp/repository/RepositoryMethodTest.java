@@ -7,9 +7,8 @@ import org.junit.Test;
 public class RepositoryMethodTest {
     @Test
     public void mapFunction() throws Exception {
-        RepositoryMethod method = new RepositoryMethod(SampleRepository.class.getName(), "executeQuery");
-        String mapFunction = method.mapFunction();
-        Assert.assertNotNull(mapFunction);
-        Assert.assertTrue(mapFunction.startsWith("function(doc)"));
+        RepositoryMethod repositoryMethod = RepositoryMethod.withMapFunction(new RepositoryMethod(SampleRepository.class.getName(), "executeQuery"));
+        Assert.assertNotNull(repositoryMethod);
+        Assert.assertTrue(repositoryMethod.mapFunction().startsWith("function(doc)"));
     }
 }

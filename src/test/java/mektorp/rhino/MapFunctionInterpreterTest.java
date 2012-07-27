@@ -1,5 +1,6 @@
 package mektorp.rhino;
 
+import mektorp.sample.TestIndexEntry;
 import mektorp.sample.TestIndexer;
 import org.junit.Test;
 
@@ -12,8 +13,9 @@ public class MapFunctionInterpreterTest {
         String function = "function emit(one, two){return indexer.index(one, two);} (function(doc){return emit(doc.foo, doc.foo);})";
         TestIndexer indexer = new TestIndexer();
         new MapFunctionInterpreter(indexer).interpret(function, objectWithFoo);
-        assertEquals(objectWithFoo.getFoo(), indexer.indexEntry().getDocId());
-        assertEquals(objectWithFoo.getFoo(), indexer.indexEntry().getValue());
+        TestIndexEntry testIndexEntry = indexer.indexEntry();
+        assertEquals(objectWithFoo.getFoo(), testIndexEntry.getDocId());
+        assertEquals(objectWithFoo.getFoo(), testIndexEntry.getValue());
     }
 
     public class ObjectWithFoo {

@@ -15,8 +15,8 @@ public class MapFunctionInterpreter {
         ScriptableObject.putProperty(scope, "indexer", jsIndexerRef);
     }
 
-    public Object interpret(String function, Object o) {
-        String jsonedObject = JSONSerializer.toJson(o);
-        return context.evaluateString(scope, String.format("%s(%s)", function, jsonedObject), "<cmd>", 1, null);
+    public void interpret(String function, Object object) {
+        String jsonedObject = JSONSerializer.toJson(object);
+        context.evaluateString(scope, String.format("%s(%s)", function, jsonedObject), "<cmd>", 1, null);
     }
 }

@@ -1,13 +1,20 @@
 package mektorp.repository;
 
+import mektorp.couch.AllDocuments;
+import mektorp.couch.Index;
+import mektorp.couch.Indexes;
+import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RepositoryMethod {
     private String className;
     private String methodName;
+    private String mapFunction;
 
     public static RepositoryMethod fromStackTrace(StackTraceElement[] stackTrace) {
         StackTraceElement e = stackTrace[2];
@@ -16,12 +23,18 @@ public class RepositoryMethod {
         return new RepositoryMethod(className, methodName);
     }
 
+    public static RepositoryMethod withMapFunction(RepositoryMethod repositoryMethod) {
+        RepositoryMethod copy = new RepositoryMethod(repositoryMethod.className, repositoryMethod.methodName);
+        copy.readMapFunction();
+        return copy;
+    }
+
     public RepositoryMethod(String className, String methodName) {
         this.className = className;
         this.methodName = methodName;
     }
 
-    public String mapFunction() {
+    private void readMapFunction() {
         try {
             Class<?> repositoryClass = Class.forName(className);
             Method method = null;
@@ -30,9 +43,36 @@ public class RepositoryMethod {
                 if (declaredMethod.getName().equals(methodName)) method = declaredMethod;
             }
             View annotation = method.getAnnotation(View.class);
-            return annotation.map();
+            mapFunction = annotation.map();
         } catch (ClassNotFoundException e) {
             throw new AssertionError(String.format("Cannot find class: %s", className), e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RepositoryMethod that = (RepositoryMethod) o;
+
+        return !(className != null ? !className.equals(that.className) : that.className != null) && !(methodName != null ? !methodName.equals(that.methodName) : that.methodName != null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = className != null ? className.hashCode() : 0;
+        result = 31 * result + (methodName != null ? methodName.hashCode() : 0);
+        return result;
+    }
+
+    public String mapFunction() {
+        return mapFunction;
+    }
+
+    public <T> List<T> execute(ViewQuery query, Class<T> type, AllDocuments allDocuments, Indexes indexes) {
+        Index index = indexes.getOrCreate(query.getViewName(), mapFunction);
+        index.build(allDocuments);
+        return new ArrayList<>();
     }
 }

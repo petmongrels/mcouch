@@ -1,6 +1,10 @@
 package mektorp;
 
-import mektorp.repository.Repositories;
+import mektorp.couch.AllDocuments;
+import mektorp.couch.Indexes;
+import mektorp.repository.Repository;
+import mektorp.repository.RepositoryMethod;
+import mektorp.rhino.MapFunctionInterpreter;
 import org.ektorp.*;
 import org.ektorp.changes.ChangesCommand;
 import org.ektorp.changes.ChangesFeed;
@@ -13,11 +17,13 @@ import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class InMemoryCouch implements CouchDbConnector {
-    private Map<String, Object> allDocuments = new HashMap<>();
-    private Repositories repositories;
+    private Repository repository;
+    private AllDocuments allDocuments = new AllDocuments();
+    private Indexes indexes;
 
-    public InMemoryCouch(Repositories repositories) {
-        this.repositories = repositories;
+    public InMemoryCouch(Repository repository, MapFunctionInterpreter mapFunctionInterpreter) {
+        this.repository = repository;
+        this.indexes = new Indexes(mapFunctionInterpreter);
     }
 
     @Override
@@ -159,8 +165,8 @@ public class InMemoryCouch implements CouchDbConnector {
 
     @Override
     public <T> List<T> queryView(ViewQuery query, Class<T> type) {
-        repositories.ensureViewIsDefined(Thread.currentThread().getStackTrace());
-        return null;
+        RepositoryMethod repositoryMethod = repository.repositoryMethod(Thread.currentThread().getStackTrace());
+        return repositoryMethod.execute(query, type, allDocuments, indexes);
     }
 
     @Override
