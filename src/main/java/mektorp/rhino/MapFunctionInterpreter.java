@@ -8,15 +8,16 @@ public class MapFunctionInterpreter {
     private Context context;
     private ScriptableObject scope;
 
-    public MapFunctionInterpreter(Indexer indexer) {
+    public MapFunctionInterpreter(EmitFunction emitFunction) {
         context = Context.enter();
         scope = context.initStandardObjects();
-        Object jsIndexerRef = Context.javaToJS(indexer, scope);
-        ScriptableObject.putProperty(scope, "indexer", jsIndexerRef);
+        Object jsEmitFunctionRef = Context.javaToJS(emitFunction, scope);
+        ScriptableObject.putProperty(scope, "javaEmitFunction", jsEmitFunctionRef);
     }
 
-    public void interpret(String function, Object object) {
+    public void interpret(String mapFunction, Object object) {
         String jsonedObject = JSONSerializer.toJson(object);
-        context.evaluateString(scope, String.format("%s(%s)", function, jsonedObject), "<cmd>", 1, null);
+        String completeJS = String.format("%s (%s) (%s)", EmitFunction.EMIT_FUNCTION, mapFunction, jsonedObject);
+        context.evaluateString(scope, completeJS, "<cmd>", 1, null);
     }
 }

@@ -13,9 +13,9 @@ public class SampleRepository {
         this.couchDbConnector = couchDbConnector;
     }
 
-    @View(name = "find_by_provider_having_active_treatment_v1", map = "function(doc) {if (doc.type ==='Patient' && doc.currentTherapy.currentTreatment && doc.onActiveTreatment === true) {emit(doc.currentTherapy.currentTreatment.providerId, doc._id);}}")
-    public List<Entity> executeQuery(List<String> ids) {
-        ViewQuery q = new ViewQuery().viewName("find_by_provider_having_active_treatment_v1").keys(ids).includeDocs(true);
+    @View(name = "find_by_single_field", map = "function(doc) {emit(doc.firstString, doc._id);}")
+    public List<Entity> findBySingleField(String fieldValue) {
+        ViewQuery q = new ViewQuery().viewName("find_by_single_field").key(fieldValue).includeDocs(true);
         return couchDbConnector.queryView(q, Entity.class);
     }
 }

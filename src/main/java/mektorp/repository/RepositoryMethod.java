@@ -3,6 +3,7 @@ package mektorp.repository;
 import mektorp.couch.AllDocuments;
 import mektorp.couch.Index;
 import mektorp.couch.Indexes;
+import mektorp.rhino.EmitFunction;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
 import org.springframework.util.ReflectionUtils;
@@ -15,6 +16,7 @@ public class RepositoryMethod {
     private String className;
     private String methodName;
     private String mapFunction;
+    private EmitFunction emitFunction;
 
     public static RepositoryMethod fromStackTrace(StackTraceElement[] stackTrace) {
         StackTraceElement e = stackTrace[2];
@@ -23,8 +25,9 @@ public class RepositoryMethod {
         return new RepositoryMethod(className, methodName);
     }
 
-    public static RepositoryMethod withMapFunction(RepositoryMethod repositoryMethod) {
+    public static RepositoryMethod withMapFunction(RepositoryMethod repositoryMethod, EmitFunction emitFunction) {
         RepositoryMethod copy = new RepositoryMethod(repositoryMethod.className, repositoryMethod.methodName);
+        copy.emitFunction = emitFunction;
         copy.readMapFunction();
         return copy;
     }
@@ -72,7 +75,12 @@ public class RepositoryMethod {
 
     public <T> List<T> execute(ViewQuery query, Class<T> type, AllDocuments allDocuments, Indexes indexes) {
         Index index = indexes.getOrCreate(query.getViewName(), mapFunction);
+        emitFunction.currentIndex(index);
         index.build(allDocuments);
-        return new ArrayList<>();
+        List<String> documentIds = index.list(query);
+        List<T> documents = new ArrayList<>(documentIds.size());
+        for (String documentId : documentIds)
+            documents.add((T) allDocuments.get(documentId));
+        return documents;
     }
 }
