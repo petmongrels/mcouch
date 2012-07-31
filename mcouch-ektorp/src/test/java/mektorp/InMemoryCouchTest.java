@@ -5,13 +5,11 @@ import mektorp.rhino.EmitFunction;
 import mektorp.rhino.MapFunctionInterpreter;
 import mektorp.sample.Entity;
 import mektorp.sample.SampleRepository;
-import org.ektorp.ComplexKey;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class InMemoryCouchTest {
-    private InMemoryCouch couch;
     private SampleRepository sampleRepository;
 
     @Before
@@ -19,7 +17,7 @@ public class InMemoryCouchTest {
         EmitFunction emitFunction = new EmitFunction();
         MapFunctionInterpreter mapFunctionInterpreter = new MapFunctionInterpreter(emitFunction);
         Repository repository = new Repository(emitFunction);
-        couch = new InMemoryCouch(repository, mapFunctionInterpreter);
+        InMemoryCouch couch = new InMemoryCouch(repository, mapFunctionInterpreter);
 
         createEntity("1", "abc", "sd52", couch);
         createEntity("2", "ghs", "76hd", couch);

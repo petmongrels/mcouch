@@ -3,22 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>mcouch</groupId>
-    <artifactId>mcouch</artifactId>
-    <version>0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>mcouch</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-        <spring.version>3.1.0.RELEASE</spring.version>
-    </properties>
+    <parent>
+        <artifactId>mcouch</artifactId>
+        <groupId>mcouch</groupId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
 
-    <modules>
-        <module>mcouch-ektorp</module>
-    </modules>
+    <name>mcouch-core</name>
+    <artifactId>mcouch.core</artifactId>
 
     <dependencies>
         <dependency>
@@ -37,6 +30,11 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>rhino</groupId>
+            <artifactId>js</artifactId>
+            <version>1.7R2</version>
         </dependency>
     </dependencies>
 </project>
