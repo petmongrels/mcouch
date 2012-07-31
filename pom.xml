@@ -18,6 +18,7 @@
 
     <modules>
         <module>mcouch-ektorp</module>
+        <module>mcouch-core</module>
     </modules>
 
     <dependencies>
