@@ -1,7 +1,7 @@
 package mcouch.ektorp.repository;
 
 import mcouch.core.rhino.EmitFunction;
-import mcouch.ektorp.mektorp.sample.SampleRepository;
+import mcouch.ektorp.sample.SampleRepository;
 import org.junit.Assert;
 import org.junit.Test;
 

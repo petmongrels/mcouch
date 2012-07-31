@@ -3,6 +3,7 @@ package mcouch.core.couch;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class AllDocuments {
     private Map<String, Object> all = new HashMap<>();
@@ -11,7 +12,7 @@ public class AllDocuments {
         return all.remove(key);
     }
 
-    public Object put(String key, Object value) {
+    public Object add(String key, Object value) {
         return all.put(key, value);
     }
 
@@ -30,4 +31,10 @@ public class AllDocuments {
             documentIterator.iterate(docId, document);
         }
     }
+
+    public void add(Object doc) {
+        UUID uuid = UUID.randomUUID();
+        add(uuid.toString(), doc);
+    }
+
 }

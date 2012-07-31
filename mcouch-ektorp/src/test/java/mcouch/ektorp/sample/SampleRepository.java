@@ -1,4 +1,4 @@
-package mcouch.ektorp.mektorp.sample;
+package mcouch.ektorp.sample;
 
 import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;

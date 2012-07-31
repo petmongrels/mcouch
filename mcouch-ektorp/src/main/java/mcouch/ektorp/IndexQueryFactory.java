@@ -17,6 +17,6 @@ public class IndexQueryFactory {
             ComplexKey endKey = (ComplexKey) viewQuery.getEndKey();
             return new BetweenQuery(index, new IndexKey(startKey.toJson().toString()), new IndexKey(endKey.toJson().toString()));
         }
-        throw new MektorpException("Cannot create IndexQuery for ViewQuery: " + viewQuery.toString());
+        throw new MCouchEktorpException("Cannot create IndexQuery for ViewQuery: " + viewQuery.toString());
     }
 }

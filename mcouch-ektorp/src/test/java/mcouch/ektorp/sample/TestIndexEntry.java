@@ -1,4 +1,4 @@
-package mcouch.ektorp.mektorp.sample;
+package mcouch.ektorp.sample;
 
 public class TestIndexEntry {
     private String value;

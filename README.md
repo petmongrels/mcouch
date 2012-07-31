@@ -1,4 +1,4 @@
-mektorp
-=======
+mCouch
+======
 
-In memory couch db for ektorp
+In memory implementation of couch, with an implementation for ektorp.

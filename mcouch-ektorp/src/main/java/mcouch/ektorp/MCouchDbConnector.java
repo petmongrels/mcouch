@@ -2,6 +2,7 @@ package mcouch.ektorp;
 
 import mcouch.core.couch.AllDocuments;
 import mcouch.core.couch.indexing.Indexes;
+import mcouch.core.rhino.EmitFunction;
 import mcouch.ektorp.repository.Repository;
 import mcouch.ektorp.repository.RepositoryMethod;
 import mcouch.core.rhino.MapFunctionInterpreter;
@@ -16,34 +17,33 @@ import java.io.InputStream;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
-public class InMemoryCouch implements CouchDbConnector {
+public class MCouchDbConnector implements CouchDbConnector {
     private Repository repository;
     private AllDocuments allDocuments = new AllDocuments();
     private Indexes indexes;
 
-    public InMemoryCouch(Repository repository, MapFunctionInterpreter mapFunctionInterpreter) {
+    public MCouchDbConnector(Repository repository, MapFunctionInterpreter mapFunctionInterpreter) {
         this.repository = repository;
         this.indexes = new Indexes(mapFunctionInterpreter);
     }
 
     @Override
     public void create(String id, Object o) {
-        allDocuments.put(id, o);
+        allDocuments.add(id, o);
     }
 
     @Override
     public void create(Object o) {
-        UUID uuid = UUID.randomUUID();
-        allDocuments.put(uuid.toString(), o);
+        allDocuments.add(o);
     }
 
-    @Override
     /**
      * Doesn't update the document revision number
      */
+    @Override
     public void update(Object o) {
         CouchDbDocument couchDbDocument = (CouchDbDocument) o;
-        allDocuments.put(couchDbDocument.getId(), couchDbDocument);
+        allDocuments.add(couchDbDocument.getId(), couchDbDocument);
     }
 
     @Override
@@ -58,22 +58,22 @@ public class InMemoryCouch implements CouchDbConnector {
 
     @Override
     public String delete(String id, String revision) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public String copy(String sourceDocId, String targetDocId) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public String copy(String sourceDocId, String targetDocId, String targetRevision) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public PurgeResult purge(Map<String, List<String>> revisionsToPurge) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
@@ -85,7 +85,7 @@ public class InMemoryCouch implements CouchDbConnector {
 
     @Override
     public <T> T get(Class<T> c, String id, Options options) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
@@ -95,17 +95,17 @@ public class InMemoryCouch implements CouchDbConnector {
 
     @Override
     public <T> T find(Class<T> c, String id, Options options) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public <T> T get(Class<T> c, String id, String rev) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public <T> T getWithConflicts(Class<T> c, String id) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
@@ -115,52 +115,52 @@ public class InMemoryCouch implements CouchDbConnector {
 
     @Override
     public InputStream getAsStream(String id) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public InputStream getAsStream(String id, String rev) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public InputStream getAsStream(String id, Options options) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public List<Revision> getRevisions(String id) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public AttachmentInputStream getAttachment(String id, String attachmentId) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public AttachmentInputStream getAttachment(String id, String attachmentId, String revision) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public String createAttachment(String docId, AttachmentInputStream data) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public String createAttachment(String docId, String revision, AttachmentInputStream data) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public String deleteAttachment(String docId, String revision, String attachmentId) {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
     public List<String> getAllDocIds() {
-        throw new MektorpException("Not supported yet");
+        throw new MCouchEktorpException("Not supported yet");
     }
 
     @Override
@@ -337,5 +337,12 @@ public class InMemoryCouch implements CouchDbConnector {
 
     @Override
     public void update(String id, InputStream document, long length, Options options) {
+    }
+
+    public static MCouchDbConnector create() {
+        EmitFunction emitFunction = new EmitFunction();
+        MapFunctionInterpreter mapFunctionInterpreter = new MapFunctionInterpreter(emitFunction);
+        Repository repository = new Repository(emitFunction);
+        return new MCouchDbConnector(repository, mapFunctionInterpreter);
     }
 }

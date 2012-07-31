@@ -1,4 +1,4 @@
-package mcouch.ektorp.mektorp.sample;
+package mcouch.ektorp.sample;
 
 public class Entity {
     private String _id;
