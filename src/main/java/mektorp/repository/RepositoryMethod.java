@@ -5,6 +5,7 @@ import mektorp.couch.indexing.Index;
 import mektorp.couch.indexing.Indexes;
 import mektorp.rhino.EmitFunction;
 import org.ektorp.ViewQuery;
+import org.ektorp.support.GenerateView;
 import org.ektorp.support.View;
 import org.springframework.util.ReflectionUtils;
 
@@ -46,7 +47,11 @@ public class RepositoryMethod {
                 if (declaredMethod.getName().equals(methodName)) method = declaredMethod;
             }
             View annotation = method.getAnnotation(View.class);
-            mapFunction = annotation.map();
+            if (annotation != null)
+                mapFunction = MapFunction.fromViewAnnotation(annotation);
+            else if (method.getAnnotation(GenerateView.class) != null) {
+                mapFunction = MapFunction.fromGenerateView(method);
+            }
         } catch (ClassNotFoundException e) {
             throw new AssertionError(String.format("Cannot find class: %s", className), e);
         }

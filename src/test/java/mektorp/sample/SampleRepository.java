@@ -3,6 +3,7 @@ package mektorp.sample;
 import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
+import org.ektorp.support.GenerateView;
 import org.ektorp.support.View;
 
 import java.util.List;
@@ -25,6 +26,12 @@ public class SampleRepository {
         ComplexKey startKey = ComplexKey.of(firstFieldValue, secondFieldValue);
         ComplexKey endKey = ComplexKey.of(firstFieldValue, secondFieldValue);
         ViewQuery q = new ViewQuery().viewName("find_by_two_fields").startKey(startKey).endKey(endKey).includeDocs(true);
+        return couchDbConnector.queryView(q, Entity.class);
+    }
+
+    @GenerateView
+    public List<Entity> findBySecondString(String secondString) {
+        ViewQuery q = new ViewQuery().viewName("by_secondString").key(secondString).includeDocs(true);
         return couchDbConnector.queryView(q, Entity.class);
     }
 }

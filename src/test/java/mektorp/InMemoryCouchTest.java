@@ -46,6 +46,11 @@ public class InMemoryCouchTest {
         Assert.assertEquals(2, sampleRepository.findByTwoFields("gts", "sas").size());
     }
 
+    @Test
+    public void findWhenViewIsGenerated() {
+        Assert.assertEquals(1, sampleRepository.findBySecondString("8hd").size());
+    }
+
     private Entity createEntity(String id, String firstString, String secondString, InMemoryCouch couch) {
         Entity entity = new Entity();
         entity.set_id(id);
