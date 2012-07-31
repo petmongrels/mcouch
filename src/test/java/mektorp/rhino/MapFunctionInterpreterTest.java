@@ -1,7 +1,7 @@
 package mektorp.rhino;
 
-import mektorp.couch.Index;
-import mektorp.couch.IndexKey;
+import mektorp.couch.indexing.Index;
+import mektorp.couch.indexing.IndexKey;
 import org.ektorp.ViewQuery;
 import org.junit.Test;
 

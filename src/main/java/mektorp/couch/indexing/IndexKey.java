@@ -1,4 +1,4 @@
-package mektorp.couch;
+package mektorp.couch.indexing;
 
 public class IndexKey {
     private String indexedValue;
@@ -25,5 +25,10 @@ public class IndexKey {
 
     public String indexedValue() {
         return indexedValue;
+    }
+
+    @Override
+    public String toString() {
+        return "indexedValue=" + indexedValue;
     }
 }

@@ -1,4 +1,4 @@
-package mektorp.couch;
+package mektorp.couch.indexing;
 
 import mektorp.rhino.MapFunctionInterpreter;
 

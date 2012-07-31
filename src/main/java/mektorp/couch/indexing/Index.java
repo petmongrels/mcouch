@@ -1,5 +1,9 @@
-package mektorp.couch;
+package mektorp.couch.indexing;
 
+import mektorp.couch.AllDocuments;
+import mektorp.couch.DocumentIterator;
+import mektorp.couch.indexing.query.IndexQuery;
+import mektorp.couch.indexing.query.IndexQueryFactory;
 import mektorp.rhino.MapFunctionInterpreter;
 import org.ektorp.ViewQuery;
 
@@ -53,8 +57,7 @@ public class Index implements DocumentIterator {
     }
 
     public List<String> list(ViewQuery query) {
-        IndexKey indexKey = new IndexKey(query.getKey().toString());
-        IndexEntry indexEntry = treeMap.get(indexKey);
-        return indexEntry == null ? new ArrayList<String>() : indexEntry.documentIds();
+        IndexQuery indexQuery = IndexQueryFactory.create(treeMap, query);
+        return indexQuery.execute();
     }
 }

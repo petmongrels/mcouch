@@ -1,5 +1,6 @@
 package mektorp.couch;
 
+import mektorp.couch.indexing.Index;
 import org.junit.Test;
 
 public class IndexTest {

@@ -1,7 +1,7 @@
 package mektorp;
 
 import mektorp.couch.AllDocuments;
-import mektorp.couch.Indexes;
+import mektorp.couch.indexing.Indexes;
 import mektorp.repository.Repository;
 import mektorp.repository.RepositoryMethod;
 import mektorp.rhino.MapFunctionInterpreter;

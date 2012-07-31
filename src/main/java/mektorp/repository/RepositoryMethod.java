@@ -1,8 +1,8 @@
 package mektorp.repository;
 
 import mektorp.couch.AllDocuments;
-import mektorp.couch.Index;
-import mektorp.couch.Indexes;
+import mektorp.couch.indexing.Index;
+import mektorp.couch.indexing.Indexes;
 import mektorp.rhino.EmitFunction;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.View;
