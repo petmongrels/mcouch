@@ -29,11 +29,6 @@ public class AllDocuments {
         }
     }
 
-    public void add(Object doc) {
-        UUID uuid = UUID.randomUUID();
-        add(uuid.toString(), doc);
-    }
-
     public <T> List<T> getAll(List<String> documentIds) {
         List<T> documents = new ArrayList<>(documentIds.size());
         for (String documentId : documentIds)

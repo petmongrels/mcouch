@@ -45,11 +45,11 @@ public class MCouchDbConnectorTest {
 
     private Entity createEntity(String id, String firstString, String secondString, MCouchDbConnector couchDbConnector) {
         Entity entity = new Entity();
-        entity.set_id(id);
+        entity.setId(id);
         entity.setFirstString(firstString);
         entity.setSecondString(secondString);
 
-        couchDbConnector.create(entity.get_id(), entity);
+        couchDbConnector.create(entity.getId(), entity);
         return entity;
     }
 }

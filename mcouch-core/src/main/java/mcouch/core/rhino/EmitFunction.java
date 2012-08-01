@@ -9,20 +9,27 @@ public class EmitFunction {
     private Index index;
     private final static ObjectMapper mapper = new ObjectMapper();
 
-    public static final String EMIT_FUNCTION = "function emit(one, two){return javaEmitFunction.emit(one, two);}";
+    public static final String EMIT_FUNCTION = "function emit(one, two){if (two) return javaEmitFunction.emit(one, two); return javaEmitFunction.emit(one)}";
+
+    public void emit(String docId) {
+        assertIndexNotNull();
+        index.addOrUpdate(docId, docId);
+    }
 
     public void emit(String indexValue, String docId) {
-        if (index == null) {
-            throw new AssertionError("Not index set, which can be updated");
-        }
+        assertIndexNotNull();
         index.addOrUpdate(indexValue, docId);
     }
 
     public void emit(String[] indexValues, String docId) {
-        if (index == null) {
-            throw new AssertionError("Not index set, which can be updated");
-        }
+        assertIndexNotNull();
         index.addOrUpdate(toJson(indexValues).toString(), docId);
+    }
+
+    private void assertIndexNotNull() {
+        if (index == null) {
+            throw new AssertionError("No index set, which can be updated");
+        }
     }
 
     private JsonNode toJson(String[] strings) {

@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @SuppressWarnings("unchecked")
 public class MCouchDbConnector implements CouchDbConnector {
@@ -36,12 +37,14 @@ public class MCouchDbConnector implements CouchDbConnector {
 
     @Override
     public void create(String id, Object o) {
+        CouchDbDocument couchDbDocument = (CouchDbDocument) o;
+        couchDbDocument.setId(id);
         allDocuments.add(id, o);
     }
 
     @Override
     public void create(Object o) {
-        allDocuments.add(o);
+        create(UUID.randomUUID().toString(), o);
     }
 
     /**

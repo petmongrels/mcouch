@@ -3,6 +3,7 @@ package mcouch.core.couch.indexing;
 import mcouch.core.couch.AllDocuments;
 import mcouch.core.couch.DocumentIterator;
 import mcouch.core.couch.IndexEntries;
+import mcouch.core.rhino.EmitFunction;
 import mcouch.core.rhino.MapFunctionInterpreter;
 
 import java.util.List;
@@ -14,12 +15,15 @@ public class Index implements DocumentIterator {
     private String name;
     private MapFunctionInterpreter mapFunctionInterpreter;
     private String mapFunction;
+    private EmitFunction emitFunction;
     private TreeMap<IndexKey, IndexEntry> treeMap = new TreeMap<>(new IndexKeyComparator());
 
-    public Index(String name, MapFunctionInterpreter mapFunctionInterpreter, String mapFunction) {
+    public Index(String name, MapFunctionInterpreter mapFunctionInterpreter, String mapFunction, EmitFunction emitFunction) {
         this.name = name;
         this.mapFunctionInterpreter = mapFunctionInterpreter;
         this.mapFunction = mapFunction;
+        this.emitFunction = emitFunction;
+        emitFunction.currentIndex(this);
     }
 
     @Override
@@ -39,6 +43,7 @@ public class Index implements DocumentIterator {
 
     @Override
     public void iterate(String id, Object document) {
+        emitFunction.currentIndex(this);
         mapFunctionInterpreter.interpret(mapFunction, document);
     }
 

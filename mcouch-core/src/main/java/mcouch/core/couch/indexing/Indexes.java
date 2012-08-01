@@ -15,16 +15,15 @@ public class Indexes {
         this.mapFunctionInterpreter = mapFunctionInterpreter;
     }
 
-    public Index getOrCreate(String name, String mapFunction) {
-        Index index = new Index(name, mapFunctionInterpreter, mapFunction);
+    public Index getOrCreate(String name, String mapFunction, EmitFunction emitFunction) {
+        Index index = new Index(name, mapFunctionInterpreter, mapFunction, emitFunction);
         if (indexList.contains(index)) return index;
         indexList.add(index);
         return index;
     }
 
     public Index buildIndex(String name, String mapFunction, EmitFunction emitFunction, AllDocuments allDocuments) {
-        Index index = getOrCreate(name, mapFunction);
-        emitFunction.currentIndex(index);
+        Index index = getOrCreate(name, mapFunction, emitFunction);
         index.build(allDocuments);
         return index;
     }

@@ -1,17 +1,10 @@
 package mcouch.ektorp.sample;
 
-public class Entity {
-    private String _id;
+import org.ektorp.support.CouchDbDocument;
+
+public class Entity extends CouchDbDocument {
     private String firstString;
     private String secondString;
-
-    public String get_id() {
-        return _id;
-    }
-
-    public void set_id(String _id) {
-        this._id = _id;
-    }
 
     public String getFirstString() {
         return firstString;
