@@ -2,9 +2,12 @@ package mcouch.core.couch.indexing;
 
 import mcouch.core.couch.AllDocuments;
 import mcouch.core.couch.DocumentIterator;
+import mcouch.core.couch.IndexEntries;
 import mcouch.core.rhino.MapFunctionInterpreter;
 
+import java.util.List;
 import java.util.NavigableMap;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class Index implements DocumentIterator {
@@ -55,7 +58,12 @@ public class Index implements DocumentIterator {
         return treeMap.get(indexKey);
     }
 
-    public NavigableMap<IndexKey, IndexEntry> itemsBetween(IndexKey startKey, IndexKey endKey) {
-        return treeMap.subMap(startKey, true, endKey, true);
+    public List<String> itemsBetween(IndexKey startKey, IndexKey endKey) {
+        SortedMap<IndexKey, IndexEntry> subMap = treeMap.subMap(startKey, true, endKey, true);
+        return new IndexEntries(subMap.values()).documentIds();
+    }
+
+    public List<String> all() {
+        return new IndexEntries(treeMap.values()).documentIds();
     }
 }

@@ -1,29 +1,36 @@
 package mcouch.ektorp;
 
 import mcouch.core.couch.AllDocuments;
+import mcouch.core.couch.indexing.Index;
 import mcouch.core.couch.indexing.Indexes;
 import mcouch.core.rhino.EmitFunction;
+import mcouch.core.rhino.MapFunctionInterpreter;
+import mcouch.ektorp.repository.MapFunction;
 import mcouch.ektorp.repository.Repository;
 import mcouch.ektorp.repository.RepositoryMethod;
-import mcouch.core.rhino.MapFunctionInterpreter;
 import org.ektorp.*;
 import org.ektorp.changes.ChangesCommand;
 import org.ektorp.changes.ChangesFeed;
 import org.ektorp.changes.DocumentChange;
 import org.ektorp.http.HttpClient;
 import org.ektorp.support.CouchDbDocument;
+import org.ektorp.support.TypeDiscriminator;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class MCouchDbConnector implements CouchDbConnector {
     private Repository repository;
+    private EmitFunction emitFunction;
     private AllDocuments allDocuments = new AllDocuments();
     private Indexes indexes;
 
-    public MCouchDbConnector(Repository repository, MapFunctionInterpreter mapFunctionInterpreter) {
+    public MCouchDbConnector(Repository repository, MapFunctionInterpreter mapFunctionInterpreter, EmitFunction emitFunction) {
         this.repository = repository;
+        this.emitFunction = emitFunction;
         this.indexes = new Indexes(mapFunctionInterpreter);
     }
 
@@ -165,6 +172,13 @@ public class MCouchDbConnector implements CouchDbConnector {
 
     @Override
     public <T> List<T> queryView(ViewQuery query, Class<T> type) {
+        if ("all".equals(query.getViewName())) {
+            TypeDiscriminator annotation = type.getAnnotation(TypeDiscriminator.class);
+            TypeDiscriminatorExpression expression = new TypeDiscriminatorExpression(annotation.value());
+            String indexName = String.format("%s-%s", type.getName(), query.getViewName());
+            Index index = indexes.buildIndex(indexName, MapFunction.forAllDocumentsOfType(expression.typeName()), emitFunction, allDocuments);
+            return allDocuments.getAll(index.all());
+        }
         RepositoryMethod repositoryMethod = repository.repositoryMethod(Thread.currentThread().getStackTrace());
         return repositoryMethod.execute(query, type, allDocuments, indexes);
     }
@@ -343,6 +357,6 @@ public class MCouchDbConnector implements CouchDbConnector {
         EmitFunction emitFunction = new EmitFunction();
         MapFunctionInterpreter mapFunctionInterpreter = new MapFunctionInterpreter(emitFunction);
         Repository repository = new Repository(emitFunction);
-        return new MCouchDbConnector(repository, mapFunctionInterpreter);
+        return new MCouchDbConnector(repository, mapFunctionInterpreter, emitFunction);
     }
 }

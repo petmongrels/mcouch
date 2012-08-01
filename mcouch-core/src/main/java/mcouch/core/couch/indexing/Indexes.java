@@ -1,5 +1,7 @@
 package mcouch.core.couch.indexing;
 
+import mcouch.core.couch.AllDocuments;
+import mcouch.core.rhino.EmitFunction;
 import mcouch.core.rhino.MapFunctionInterpreter;
 
 import java.util.ArrayList;
@@ -17,6 +19,13 @@ public class Indexes {
         Index index = new Index(name, mapFunctionInterpreter, mapFunction);
         if (indexList.contains(index)) return index;
         indexList.add(index);
+        return index;
+    }
+
+    public Index buildIndex(String name, String mapFunction, EmitFunction emitFunction, AllDocuments allDocuments) {
+        Index index = getOrCreate(name, mapFunction);
+        emitFunction.currentIndex(index);
+        index.build(allDocuments);
         return index;
     }
 }

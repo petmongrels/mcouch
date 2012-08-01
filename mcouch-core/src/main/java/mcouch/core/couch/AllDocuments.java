@@ -1,9 +1,6 @@
 package mcouch.core.couch;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class AllDocuments {
     private Map<String, Object> all = new HashMap<>();
@@ -37,4 +34,10 @@ public class AllDocuments {
         add(uuid.toString(), doc);
     }
 
+    public <T> List<T> getAll(List<String> documentIds) {
+        List<T> documents = new ArrayList<>(documentIds.size());
+        for (String documentId : documentIds)
+            documents.add((T) get(documentId));
+        return documents;
+    }
 }

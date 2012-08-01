@@ -81,14 +81,9 @@ public class RepositoryMethod {
     }
 
     public <T> List<T> execute(ViewQuery query, Class<T> type, AllDocuments allDocuments, Indexes indexes) {
-        Index index = indexes.getOrCreate(query.getViewName(), mapFunction);
-        emitFunction.currentIndex(index);
-        index.build(allDocuments);
+        Index index = indexes.buildIndex(query.getViewName(), mapFunction, emitFunction, allDocuments);
         List<String> documentIds = list(query, index);
-        List<T> documents = new ArrayList<>(documentIds.size());
-        for (String documentId : documentIds)
-            documents.add((T) allDocuments.get(documentId));
-        return documents;
+        return allDocuments.getAll(documentIds);
     }
 
     private List<String> list(ViewQuery query, Index index) {
