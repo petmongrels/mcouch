@@ -1,18 +1,16 @@
 package mcouch.ektorp.repository;
 
 import mcouch.core.couch.AllDocuments;
-import mcouch.core.couch.indexing.Index;
+import mcouch.core.couch.indexing.View;
 import mcouch.core.couch.indexing.Indexes;
 import mcouch.core.couch.indexing.query.IndexQuery;
 import mcouch.ektorp.IndexQueryFactory;
 import mcouch.core.rhino.EmitFunction;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.GenerateView;
-import org.ektorp.support.View;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RepositoryMethod {
@@ -48,7 +46,7 @@ public class RepositoryMethod {
             for (Method declaredMethod : allDeclaredMethods) {
                 if (declaredMethod.getName().equals(methodName)) method = declaredMethod;
             }
-            View annotation = method.getAnnotation(View.class);
+            org.ektorp.support.View annotation = method.getAnnotation(org.ektorp.support.View.class);
             if (annotation != null)
                 mapFunction = MapFunction.fromViewAnnotation(annotation);
             else if (method.getAnnotation(GenerateView.class) != null) {
@@ -81,13 +79,13 @@ public class RepositoryMethod {
     }
 
     public <T> List<T> execute(ViewQuery query, Class<T> type, AllDocuments allDocuments, Indexes indexes) {
-        Index index = indexes.buildIndex(query.getViewName(), mapFunction, emitFunction, allDocuments);
-        List<String> documentIds = list(query, index);
+        View view = indexes.buildIndex(query.getViewName(), mapFunction, emitFunction, allDocuments);
+        List<String> documentIds = list(query, view);
         return allDocuments.getAll(documentIds);
     }
 
-    private List<String> list(ViewQuery query, Index index) {
-        IndexQuery indexQuery = IndexQueryFactory.create(query, index);
+    private List<String> list(ViewQuery query, View view) {
+        IndexQuery indexQuery = IndexQueryFactory.create(query, view);
         return indexQuery.execute();
     }
 }

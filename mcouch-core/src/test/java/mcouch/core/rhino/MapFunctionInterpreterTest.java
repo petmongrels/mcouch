@@ -1,6 +1,6 @@
 package mcouch.core.rhino;
 
-import mcouch.core.couch.indexing.Index;
+import mcouch.core.couch.indexing.View;
 import mcouch.core.couch.indexing.IndexEntry;
 import mcouch.core.couch.indexing.IndexKey;
 import org.junit.Before;
@@ -25,9 +25,9 @@ public class MapFunctionInterpreterTest {
         objectWithFoo.setFoo("bar");
         String function = "function(doc){return emit(doc.foo, doc.foo);}";
 
-        Index index = new Index("whatever", mapFunctionInterpreter, function, emitFunction);
-        index.iterate("1", objectWithFoo);
-        IndexEntry indexEntry = index.get(new IndexKey("bar"));
+        View view = new View("whatever", mapFunctionInterpreter, function, emitFunction);
+        view.iterate("1", objectWithFoo);
+        IndexEntry indexEntry = view.get(new IndexKey("bar"));
         assertNotNull(indexEntry);
     }
 
@@ -38,10 +38,10 @@ public class MapFunctionInterpreterTest {
         objectWithFoo.setFoo("bar");
 
         String mapFunction = "function(doc) {if (doc.type ==='Baz') emit(doc.foo);}";
-        Index index = new Index("whatever", mapFunctionInterpreter, mapFunction, emitFunction);
+        View view = new View("whatever", mapFunctionInterpreter, mapFunction, emitFunction);
 
         mapFunctionInterpreter.interpret(mapFunction, objectWithFoo);
-        IndexEntry indexEntry = index.get(new IndexKey("bar"));
+        IndexEntry indexEntry = view.get(new IndexKey("bar"));
         assertNotNull(indexEntry);
         assertEquals("bar", indexEntry.documentIds().get(0));
     }

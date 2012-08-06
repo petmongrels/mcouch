@@ -7,18 +7,17 @@ import mcouch.core.rhino.EmitFunction;
 import mcouch.core.rhino.MapFunctionInterpreter;
 
 import java.util.List;
-import java.util.NavigableMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class Index implements DocumentIterator {
+public class View implements DocumentIterator {
     private String name;
     private MapFunctionInterpreter mapFunctionInterpreter;
     private String mapFunction;
     private EmitFunction emitFunction;
     private TreeMap<IndexKey, IndexEntry> treeMap = new TreeMap<>(new IndexKeyComparator());
 
-    public Index(String name, MapFunctionInterpreter mapFunctionInterpreter, String mapFunction, EmitFunction emitFunction) {
+    public View(String name, MapFunctionInterpreter mapFunctionInterpreter, String mapFunction, EmitFunction emitFunction) {
         this.name = name;
         this.mapFunctionInterpreter = mapFunctionInterpreter;
         this.mapFunction = mapFunction;
@@ -31,9 +30,9 @@ public class Index implements DocumentIterator {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Index index = (Index) o;
+        View view = (View) o;
 
-        return name.equals(index.name);
+        return name.equals(view.name);
     }
 
     @Override

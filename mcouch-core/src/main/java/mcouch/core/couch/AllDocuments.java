@@ -35,4 +35,8 @@ public class AllDocuments {
             documents.add((T) get(documentId));
         return documents;
     }
+
+    public int size() {
+        return all.size();
+    }
 }

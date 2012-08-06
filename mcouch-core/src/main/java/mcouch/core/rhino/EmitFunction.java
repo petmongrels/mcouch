@@ -1,34 +1,34 @@
 package mcouch.core.rhino;
 
-import mcouch.core.couch.indexing.Index;
+import mcouch.core.couch.indexing.View;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
 public class EmitFunction {
-    private Index index;
+    private View view;
     private final static ObjectMapper mapper = new ObjectMapper();
 
     public static final String EMIT_FUNCTION = "function emit(one, two){if (two) return javaEmitFunction.emit(one, two); return javaEmitFunction.emit(one)}";
 
     public void emit(String docId) {
         assertIndexNotNull();
-        index.addOrUpdate(docId, docId);
+        view.addOrUpdate(docId, docId);
     }
 
     public void emit(String indexValue, String docId) {
         assertIndexNotNull();
-        index.addOrUpdate(indexValue, docId);
+        view.addOrUpdate(indexValue, docId);
     }
 
     public void emit(String[] indexValues, String docId) {
         assertIndexNotNull();
-        index.addOrUpdate(toJson(indexValues).toString(), docId);
+        view.addOrUpdate(toJson(indexValues).toString(), docId);
     }
 
     private void assertIndexNotNull() {
-        if (index == null) {
-            throw new AssertionError("No index set, which can be updated");
+        if (view == null) {
+            throw new AssertionError("No view set, which can be updated");
         }
     }
 
@@ -45,7 +45,7 @@ public class EmitFunction {
     }
 
 
-    public void currentIndex(Index index) {
-        this.index = index;
+    public void currentIndex(View view) {
+        this.view = view;
     }
 }

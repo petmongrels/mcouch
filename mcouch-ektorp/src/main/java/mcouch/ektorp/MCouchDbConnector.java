@@ -1,7 +1,7 @@
 package mcouch.ektorp;
 
 import mcouch.core.couch.AllDocuments;
-import mcouch.core.couch.indexing.Index;
+import mcouch.core.couch.indexing.View;
 import mcouch.core.couch.indexing.Indexes;
 import mcouch.core.rhino.EmitFunction;
 import mcouch.core.rhino.MapFunctionInterpreter;
@@ -179,8 +179,8 @@ public class MCouchDbConnector implements CouchDbConnector {
             TypeDiscriminator annotation = type.getAnnotation(TypeDiscriminator.class);
             TypeDiscriminatorExpression expression = new TypeDiscriminatorExpression(annotation.value());
             String indexName = String.format("%s-%s", type.getName(), query.getViewName());
-            Index index = indexes.buildIndex(indexName, MapFunction.forAllDocumentsOfType(expression.typeName()), emitFunction, allDocuments);
-            return allDocuments.getAll(index.all());
+            View view = indexes.buildIndex(indexName, MapFunction.forAllDocumentsOfType(expression.typeName()), emitFunction, allDocuments);
+            return allDocuments.getAll(view.all());
         }
         RepositoryMethod repositoryMethod = repository.repositoryMethod(Thread.currentThread().getStackTrace());
         return repositoryMethod.execute(query, type, allDocuments, indexes);
