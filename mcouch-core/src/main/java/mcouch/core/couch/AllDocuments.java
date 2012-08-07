@@ -1,16 +1,25 @@
 package mcouch.core.couch;
 
+import mcouch.core.rhino.ExtractDocumentIdFunction;
+import mcouch.core.rhino.JavaScriptInterpreter;
+
 import java.util.*;
 
 public class AllDocuments {
-    private Map<String, Object> all = new HashMap<>();
+    private Map<String, String> all = new HashMap<>();
+    private final ExtractDocumentIdFunction extractDocumentIdFunction;
+
+    public AllDocuments(JavaScriptInterpreter javaScriptInterpreter) {
+        extractDocumentIdFunction = new ExtractDocumentIdFunction(javaScriptInterpreter);
+    }
 
     public Object remove(Object key) {
         return all.remove(key);
     }
 
-    public Object add(String key, Object value) {
-        return all.put(key, value);
+    public Object add(String document) {
+        String key = extractDocumentIdFunction.getFrom(document);
+        return all.put(key, document);
     }
 
     public Object get(Object key) {

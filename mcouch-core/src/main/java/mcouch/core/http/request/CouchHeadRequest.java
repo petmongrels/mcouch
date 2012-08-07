@@ -6,25 +6,21 @@ import mcouch.core.http.StandardHttpResponse;
 import org.apache.http.HttpResponse;
 
 import java.net.URI;
-import java.util.StringTokenizer;
 
 public class CouchHeadRequest implements CouchRequest {
-    private URI uri;
+    private CouchURI uri;
 
     public CouchHeadRequest(URI uri) {
-        this.uri = uri;
+        this.uri = new CouchURI(uri);
     }
 
     @Override
     public HttpResponse execute(Databases databases) {
-        String uriPath = uri.getPath();
-        StringTokenizer pathTokenizer = new StringTokenizer(uriPath, "/");
-        String databaseName = pathTokenizer.nextToken();
-        if (pathTokenizer.countTokens() == 0) {
-            return responseBasedOnPresence(databases.contains(databaseName));
-        } else if (databases.contains(databaseName) && pathTokenizer.countTokens() == 2 && pathTokenizer.nextToken().equals("_design")) {
-            Database database = databases.getDatabase(databaseName);
-            return responseBasedOnPresence(database.containsViewGroup(pathTokenizer.nextToken()));
+        if (uri.viewGroup() == null) {
+            return responseBasedOnPresence(databases.contains(uri.databaseName()));
+        } else if (databases.contains(uri.databaseName()) && uri.viewGroup() != null) {
+            Database database = databases.getDatabase(uri.databaseName());
+            return responseBasedOnPresence(database.containsViewGroup(uri.viewGroup()));
         }
         return null;
     }

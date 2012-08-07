@@ -14,15 +14,12 @@ public class View implements DocumentIterator {
     private String name;
     private MapFunctionInterpreter mapFunctionInterpreter;
     private String mapFunction;
-    private EmitFunction emitFunction;
     private TreeMap<IndexKey, IndexEntry> treeMap = new TreeMap<>(new IndexKeyComparator());
 
-    public View(String name, MapFunctionInterpreter mapFunctionInterpreter, String mapFunction, EmitFunction emitFunction) {
+    public View(String name, MapFunctionInterpreter mapFunctionInterpreter, String mapFunction) {
         this.name = name;
         this.mapFunctionInterpreter = mapFunctionInterpreter;
         this.mapFunction = mapFunction;
-        this.emitFunction = emitFunction;
-        emitFunction.currentIndex(this);
     }
 
     @Override
@@ -42,11 +39,11 @@ public class View implements DocumentIterator {
 
     @Override
     public void iterate(String id, Object document) {
-        emitFunction.currentIndex(this);
         mapFunctionInterpreter.interpret(mapFunction, document);
     }
 
     public void build(AllDocuments allDocuments) {
+        mapFunctionInterpreter.emitOn(this);
         allDocuments.doForAllDocuments(this);
     }
 

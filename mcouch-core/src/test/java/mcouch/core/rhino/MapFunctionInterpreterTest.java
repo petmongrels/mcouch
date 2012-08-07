@@ -1,5 +1,6 @@
 package mcouch.core.rhino;
 
+import mcouch.core.TestContext;
 import mcouch.core.couch.indexing.View;
 import mcouch.core.couch.indexing.IndexEntry;
 import mcouch.core.couch.indexing.IndexKey;
@@ -10,14 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class MapFunctionInterpreterTest {
-    private EmitFunction emitFunction;
-    private MapFunctionInterpreter mapFunctionInterpreter;
-
-    @Before
-    public void setup() {
-        emitFunction = new EmitFunction();
-        mapFunctionInterpreter = new MapFunctionInterpreter(emitFunction);
-    }
+    private MapFunctionInterpreter mapFunctionInterpreter = TestContext.MAP_FUNCTION_INTERPRETER;
 
     @Test
     public void shouldEvalWithEmitCalls() {
@@ -25,7 +19,8 @@ public class MapFunctionInterpreterTest {
         objectWithFoo.setFoo("bar");
         String function = "function(doc){return emit(doc.foo, doc.foo);}";
 
-        View view = new View("whatever", mapFunctionInterpreter, function, emitFunction);
+        View view = new View("whatever", mapFunctionInterpreter, function);
+        mapFunctionInterpreter.emitOn(view);
         view.iterate("1", objectWithFoo);
         IndexEntry indexEntry = view.get(new IndexKey("bar"));
         assertNotNull(indexEntry);
@@ -38,8 +33,9 @@ public class MapFunctionInterpreterTest {
         objectWithFoo.setFoo("bar");
 
         String mapFunction = "function(doc) {if (doc.type ==='Baz') emit(doc.foo);}";
-        View view = new View("whatever", mapFunctionInterpreter, mapFunction, emitFunction);
+        View view = new View("whatever", mapFunctionInterpreter, mapFunction);
 
+        mapFunctionInterpreter.emitOn(view);
         mapFunctionInterpreter.interpret(mapFunction, objectWithFoo);
         IndexEntry indexEntry = view.get(new IndexKey("bar"));
         assertNotNull(indexEntry);

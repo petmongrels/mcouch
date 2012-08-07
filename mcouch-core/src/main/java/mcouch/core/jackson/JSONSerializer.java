@@ -19,13 +19,10 @@ public class JSONSerializer {
 
     public static <T> T fromJson(String jsonString, Class<T> rootClass) {
         ObjectMapper mapper = new ObjectMapper();
-        T serializedObject = null;
         try {
-            serializedObject = mapper.readValue(jsonString, rootClass);
+            return mapper.readValue(jsonString, rootClass);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return serializedObject;
     }
-
 }

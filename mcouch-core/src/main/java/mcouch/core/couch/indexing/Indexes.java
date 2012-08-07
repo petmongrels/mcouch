@@ -15,15 +15,15 @@ public class Indexes {
         this.mapFunctionInterpreter = mapFunctionInterpreter;
     }
 
-    public View getOrCreate(String name, String mapFunction, EmitFunction emitFunction) {
-        View view = new View(name, mapFunctionInterpreter, mapFunction, emitFunction);
+    public View getOrCreate(String name, String mapFunction) {
+        View view = new View(name, mapFunctionInterpreter, mapFunction);
         if (viewList.contains(view)) return view;
         viewList.add(view);
         return view;
     }
 
-    public View buildIndex(String name, String mapFunction, EmitFunction emitFunction, AllDocuments allDocuments) {
-        View view = getOrCreate(name, mapFunction, emitFunction);
+    public View buildIndex(String name, String mapFunction, AllDocuments allDocuments) {
+        View view = getOrCreate(name, mapFunction);
         view.build(allDocuments);
         return view;
     }

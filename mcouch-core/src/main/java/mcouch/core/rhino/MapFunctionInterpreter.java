@@ -1,23 +1,29 @@
 package mcouch.core.rhino;
 
+import mcouch.core.couch.indexing.View;
 import mcouch.core.jackson.JSONSerializer;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.ScriptableObject;
 
 public class MapFunctionInterpreter {
-    private Context context;
-    private ScriptableObject scope;
+    private EmitFunction emitFunction;
+    private final JavaScriptInterpreter javaScriptInterpreter;
 
-    public MapFunctionInterpreter(EmitFunction emitFunction) {
-        context = Context.enter();
-        scope = context.initStandardObjects();
-        Object jsEmitFunctionRef = Context.javaToJS(emitFunction, scope);
-        ScriptableObject.putProperty(scope, "javaEmitFunction", jsEmitFunctionRef);
+    public MapFunctionInterpreter(JavaScriptInterpreter javaScriptInterpreter) {
+        emitFunction = new EmitFunction();
+        this.javaScriptInterpreter = javaScriptInterpreter;
+        javaScriptInterpreter.defineLink(emitFunction, "javaEmitFunction");
     }
 
     public void interpret(String mapFunction, Object object) {
         String jsonedObject = JSONSerializer.toJson(object);
         String completeJS = String.format("%s (%s) (%s)", EmitFunction.EMIT_FUNCTION, mapFunction, jsonedObject);
-        context.evaluateString(scope, completeJS, "<cmd>", 1, null);
+        javaScriptInterpreter.interpret(completeJS);
+    }
+
+    public EmitFunction emitFunction() {
+        return emitFunction;
+    }
+
+    public void emitOn(View view) {
+        emitFunction.currentIndex(view);
     }
 }
