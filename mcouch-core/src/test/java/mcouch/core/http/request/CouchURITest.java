@@ -11,7 +11,7 @@ public class CouchURITest {
     @Test
     public void viewRequest() throws URISyntaxException {
         URI uri = new URI("/motech-whp/_design/Patient/_view/by_patientId?key=%22patient1%22");
-        CouchURI couchURI = new CouchURI(uri);
+        CouchURI couchURI = new CouchURI(uri, "GET");
         assertEquals("motech-whp", couchURI.databaseName());
         assertEquals("Patient", couchURI.viewGroup());
         assertEquals("by_patientId", couchURI.viewName());

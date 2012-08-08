@@ -13,7 +13,7 @@ public class AllDocuments {
         extractDocumentIdFunction = new ExtractDocumentIdFunction(javaScriptInterpreter);
     }
 
-    public Object remove(Object key) {
+    public Object remove(String key) {
         return all.remove(key);
     }
 
@@ -22,12 +22,8 @@ public class AllDocuments {
         return all.put(key, document);
     }
 
-    public Object get(Object key) {
+    public String get(String key) {
         return all.get(key);
-    }
-
-    public boolean containsKey(Object key) {
-        return all.containsKey(key);
     }
 
     public void doForAllDocuments(DocumentIterator documentIterator) {
@@ -38,10 +34,10 @@ public class AllDocuments {
         }
     }
 
-    public <T> List<T> getAll(List<String> documentIds) {
-        List<T> documents = new ArrayList<>(documentIds.size());
+    public List<String> getAll(List<String> documentIds) {
+        List<String> documents = new ArrayList<>(documentIds.size());
         for (String documentId : documentIds)
-            documents.add((T) get(documentId));
+            documents.add(get(documentId));
         return documents;
     }
 

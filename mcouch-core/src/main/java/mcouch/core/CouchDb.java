@@ -2,7 +2,7 @@ package mcouch.core;
 
 import mcouch.core.couch.database.Databases;
 import mcouch.core.http.ClientConnectionManagerStub;
-import mcouch.core.http.CouchHttpRequestFactory;
+import mcouch.core.http.request.CouchHttpRequestFactory;
 import mcouch.core.http.HttpParamsStub;
 import mcouch.core.http.NotImplementedException;
 import mcouch.core.http.request.CouchRequest;

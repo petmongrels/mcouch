@@ -16,6 +16,7 @@ public class Database {
     private AllDocuments allDocuments;
     private List<ViewGroup> viewGroups = new ArrayList<>();
     private Indexes indexes;
+    private static String QueryResult = "{\"total_rows\":{0},\"offset\":0,\"rows\":[";
 
     private String name;
 
@@ -57,11 +58,22 @@ public class Database {
         return viewGroups.get(viewGroups.indexOf(new ViewGroup(name, null)));
     }
 
-    public void executeView(String viewGroupName, String viewName) {
+    public String executeView(String viewGroupName, String viewName) {
         ViewGroup viewGroup = viewGroup(viewGroupName);
         ViewsDefinition viewsDefinition = viewGroup.definition();
         ViewDefinition viewDefinition = viewsDefinition.getView(viewName);
         View view = indexes.buildIndex(viewName, viewDefinition.mapFunction(), allDocuments);
+        List<String> matchingDocuments = allDocuments.getAll(view.all());
 
+        StringBuilder stringBuilder = new StringBuilder(45 + matchingDocuments.size() * 100);
+        stringBuilder.append(String.format(QueryResult, matchingDocuments.size()));
+        for (String matchingDocument : matchingDocuments)
+            stringBuilder.append(matchingDocument).append(",");
+        stringBuilder.append("]}");
+        return stringBuilder.toString();
+    }
+
+    public void addDocument(String document) {
+        allDocuments.add(document);
     }
 }

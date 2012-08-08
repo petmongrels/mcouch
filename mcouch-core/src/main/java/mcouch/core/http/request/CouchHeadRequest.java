@@ -5,13 +5,11 @@ import mcouch.core.couch.database.Databases;
 import mcouch.core.http.StandardHttpResponse;
 import org.apache.http.HttpResponse;
 
-import java.net.URI;
-
 public class CouchHeadRequest implements CouchRequest {
     private CouchURI uri;
 
-    public CouchHeadRequest(URI uri) {
-        this.uri = new CouchURI(uri);
+    public CouchHeadRequest(CouchURI uri) {
+        this.uri = uri;
     }
 
     @Override

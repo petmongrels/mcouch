@@ -17,7 +17,7 @@ public class CouchPutRequest implements CouchRequest {
 
     public CouchPutRequest(HttpPut request) {
         this.request = request;
-        uri = new CouchURI(request.getURI());
+        uri = new CouchURI(request.getURI(), request.getMethod());
     }
 
     @Override
