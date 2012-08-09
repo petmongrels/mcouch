@@ -18,7 +18,7 @@ import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
 
-public class CouchDb implements HttpClient {
+public class InMemoryCouchDb implements HttpClient {
     private Databases databases;
 
     @Override
