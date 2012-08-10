@@ -1,6 +1,7 @@
 package mcouch.core.rhino;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.NativeJSON;
 import org.mozilla.javascript.ScriptableObject;
 
 public class JavaScriptInterpreter {
@@ -19,5 +20,9 @@ public class JavaScriptInterpreter {
 
     public Object interpret(String javaScriptCode) {
         return context.evaluateString(scope, javaScriptCode, "<cmd>", 1, null);
+    }
+
+    public String stringiFy(Object object) {
+        return NativeJSON.stringify(context, scope, object, null, null).toString();
     }
 }

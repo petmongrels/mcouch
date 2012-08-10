@@ -6,6 +6,8 @@ import mcouch.core.couch.indexing.View;
 import mcouch.core.couch.view.ViewDefinition;
 import mcouch.core.couch.view.ViewGroup;
 import mcouch.core.couch.view.ViewsDefinition;
+import mcouch.core.http.response.SuccessfulDocumentCreateResponse;
+import mcouch.core.rhino.DocumentFunctions;
 import mcouch.core.rhino.JavaScriptInterpreter;
 import mcouch.core.rhino.MapFunctionInterpreter;
 
@@ -19,15 +21,17 @@ public class Database {
     private static String QueryResult = "{\"total_rows\":{0},\"offset\":0,\"rows\":[";
 
     private String name;
+    private final DocumentFunctions documentFunctions;
 
     public Database(String name, MapFunctionInterpreter mapFunctionInterpreter, JavaScriptInterpreter javaScriptInterpreter) {
         this.name = name;
         indexes = new Indexes(mapFunctionInterpreter);
         allDocuments = new AllDocuments(javaScriptInterpreter);
+        documentFunctions = new DocumentFunctions(javaScriptInterpreter);
     }
 
     public void createViewGroup(String viewGroupName, String document) {
-        viewGroups.add(new ViewGroup(viewGroupName, document));
+        viewGroups.add(new ViewGroup(viewGroupName, document, documentFunctions));
     }
 
     @Override
@@ -37,7 +41,6 @@ public class Database {
 
         Database database = (Database) o;
         return name.equals(database.name);
-
     }
 
     @Override
@@ -51,11 +54,11 @@ public class Database {
     }
 
     public boolean containsViewGroup(String viewGroupName) {
-        return viewGroups.contains(new ViewGroup(viewGroupName, "{}"));
+        return viewGroups.contains(new ViewGroup(viewGroupName, "{}", documentFunctions));
     }
 
     public ViewGroup viewGroup(String name) {
-        return viewGroups.get(viewGroups.indexOf(new ViewGroup(name, null)));
+        return viewGroups.get(viewGroups.indexOf(new ViewGroup(name, null, documentFunctions)));
     }
 
     public String executeView(String viewGroupName, String viewName) {
@@ -73,7 +76,11 @@ public class Database {
         return stringBuilder.toString();
     }
 
-    public void addDocument(String document) {
-        allDocuments.add(document);
+    public SuccessfulDocumentCreateResponse addDocument(String document) {
+        return allDocuments.add(document);
+    }
+
+    public String get(String documentId) {
+        return allDocuments.get(documentId);
     }
 }

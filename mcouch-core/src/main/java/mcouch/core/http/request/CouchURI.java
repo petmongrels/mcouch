@@ -13,28 +13,35 @@ public class CouchURI {
     private String viewName;
     private String key;
     private boolean bulkPost;
+    private String documentId;
 
     public CouchURI(URI uri, String method) {
         String uriPath = uri.getPath();
         StringTokenizer pathTokenizer = new StringTokenizer(uriPath, "/");
         if (pathTokenizer.countTokens() >= 1)
             databaseName = pathTokenizer.nextToken();
+        if (method.equals("GET") && pathTokenizer.countTokens() == 1) {
+            documentId = pathTokenizer.nextToken();
+            return;
+        }
+
         if (method.equals("POST") && pathTokenizer.countTokens() == 1 && pathTokenizer.nextToken().equals("_bulk_docs")) {
             bulkPost = true;
-        } else {
-            if (pathTokenizer.countTokens() >= 2 && pathTokenizer.nextToken().equals("_design"))
-                viewGroup = pathTokenizer.nextToken();
+            return;
+        }
 
-            if (pathTokenizer.countTokens() >= 2 && pathTokenizer.nextToken().equals("_view"))
-                viewName = pathTokenizer.nextToken();
+        if (pathTokenizer.countTokens() >= 2 && pathTokenizer.nextToken().equals("_design"))
+            viewGroup = pathTokenizer.nextToken();
 
-            List<NameValuePair> queryParams = URLEncodedUtils.parse(uri, "UTF-8");
-            for (NameValuePair nameValuePair : queryParams) {
-                switch (nameValuePair.getName()) {
-                    case "key":
-                        String value = nameValuePair.getValue();
-                        key = value.substring(1, value.length() - 1);
-                }
+        if (pathTokenizer.countTokens() >= 2 && pathTokenizer.nextToken().equals("_view"))
+            viewName = pathTokenizer.nextToken();
+
+        List<NameValuePair> queryParams = URLEncodedUtils.parse(uri, "UTF-8");
+        for (NameValuePair nameValuePair : queryParams) {
+            switch (nameValuePair.getName()) {
+                case "key":
+                    String value = nameValuePair.getValue();
+                    key = value.substring(1, value.length() - 1);
             }
         }
     }
@@ -64,10 +71,18 @@ public class CouchURI {
     }
 
     public boolean isBulkDocsRequest() {
-        return databaseName != null;
+        return databaseName != null && bulkPost;
     }
 
     public boolean isBulkPost() {
         return bulkPost;
+    }
+
+    public boolean isGetDocRequest() {
+        return documentId != null;
+    }
+
+    public String documentId() {
+        return documentId;
     }
 }

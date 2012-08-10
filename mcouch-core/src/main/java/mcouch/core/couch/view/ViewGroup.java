@@ -1,12 +1,14 @@
 package mcouch.core.couch.view;
 
+import mcouch.core.rhino.DocumentFunctions;
+
 public class ViewGroup {
     private final String name;
     private ViewsDefinition viewsDefinition;
 
-    public ViewGroup(String name, String document) {
+    public ViewGroup(String name, String document, DocumentFunctions documentFunctions) {
         this.name = name;
-        viewsDefinition = ViewsDefinition.create(document);
+        viewsDefinition = ViewsDefinition.create(document, documentFunctions);
     }
 
     public ViewsDefinition definition() {

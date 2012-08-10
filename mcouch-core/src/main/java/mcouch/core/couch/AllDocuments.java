@@ -1,25 +1,30 @@
 package mcouch.core.couch;
 
-import mcouch.core.rhino.ExtractDocumentIdFunction;
+import mcouch.core.http.response.SuccessfulDocumentCreateResponse;
+import mcouch.core.rhino.DocumentFunctions;
 import mcouch.core.rhino.JavaScriptInterpreter;
 
 import java.util.*;
 
 public class AllDocuments {
     private Map<String, String> all = new HashMap<>();
-    private final ExtractDocumentIdFunction extractDocumentIdFunction;
+    private final DocumentFunctions documentFunctions;
 
     public AllDocuments(JavaScriptInterpreter javaScriptInterpreter) {
-        extractDocumentIdFunction = new ExtractDocumentIdFunction(javaScriptInterpreter);
+        documentFunctions = new DocumentFunctions(javaScriptInterpreter);
     }
 
     public Object remove(String key) {
         return all.remove(key);
     }
 
-    public Object add(String document) {
-        String key = extractDocumentIdFunction.getFrom(document);
-        return all.put(key, document);
+    public SuccessfulDocumentCreateResponse add(String document) {
+        String id = UUID.randomUUID().toString();
+        String rev = UUID.randomUUID().toString();
+        String updatedDoc = documentFunctions.updateNewDocument(document, id, rev);
+        SuccessfulDocumentCreateResponse response = new SuccessfulDocumentCreateResponse(id, rev);
+        all.put(id, updatedDoc);
+        return response;
     }
 
     public String get(String key) {

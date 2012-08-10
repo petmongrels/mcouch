@@ -3,9 +3,12 @@ package mcouch.core.http.request;
 import mcouch.core.couch.database.Database;
 import mcouch.core.couch.database.Databases;
 import mcouch.core.http.StandardHttpResponse;
+import mcouch.core.http.response.SuccessfulDocumentCreateResponse;
 import mcouch.core.jackson.JSONSerializer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
+
+import java.util.UUID;
 
 public class CouchPostRequest implements CouchRequest {
     private HttpPost request;
@@ -28,9 +31,10 @@ public class CouchPostRequest implements CouchRequest {
             String[] documents = JSONSerializer.fromJson(submittedJSON, String[].class);
             for (String document : documents)
                 database.addDocument(document);
+            return StandardHttpResponse.OK;
         } else {
-            database.addDocument(submittedJSON);
+            SuccessfulDocumentCreateResponse response = database.addDocument(submittedJSON);
+            return StandardHttpResponse.okWith(response);
         }
-        return StandardHttpResponse.OK;
     }
 }

@@ -16,13 +16,16 @@ public class CouchGetRequest implements CouchRequest {
 
     @Override
     public HttpResponse execute(Databases databases) {
-        if (databases.contains(uri.databaseName()))
+        if (!databases.contains(uri.databaseName()))
             throw new NotImplementedException();
 
         Database database = databases.getDatabase(uri.databaseName());
         if (uri.isGetViewDocRequest()) {
             ViewsDefinition viewsDefinition = database.viewGroup(uri.viewGroup()).definition();
             return StandardHttpResponse.okWith(viewsDefinition.document());
+        }
+        if (uri.isGetDocRequest()) {
+            return StandardHttpResponse.okWith(database.get(uri.documentId()));
         }
         if (uri.isExecuteViewRequest()) {
             String response = database.executeView(uri.viewGroup(), uri.viewName());

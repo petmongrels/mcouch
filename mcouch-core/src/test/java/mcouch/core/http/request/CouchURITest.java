@@ -17,4 +17,11 @@ public class CouchURITest {
         assertEquals("by_patientId", couchURI.viewName());
         assertEquals("patient1", couchURI.key());
     }
+
+    @Test
+    public void getDocRequest() throws URISyntaxException {
+        URI uri = new URI("/motech-whp/4574564835643");
+        CouchURI couchURI = new CouchURI(uri, "GET");
+        assertEquals(true, couchURI.isGetDocRequest());
+    }
 }
