@@ -1,7 +1,6 @@
 package mcouch.core.couch.indexing;
 
 import mcouch.core.couch.AllDocuments;
-import mcouch.core.rhino.EmitFunction;
 import mcouch.core.rhino.MapFunctionInterpreter;
 
 import java.util.ArrayList;

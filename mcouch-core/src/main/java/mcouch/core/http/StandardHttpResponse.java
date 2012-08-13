@@ -1,6 +1,5 @@
 package mcouch.core.http;
 
-import mcouch.core.http.response.SuccessfulDocumentCreateResponse;
 import mcouch.core.jackson.JSONSerializer;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;

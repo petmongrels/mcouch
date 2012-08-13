@@ -9,9 +9,9 @@ public class CouchHttpRequestFactory {
     public static CouchRequest create(HttpRequestBase request) {
         switch (request.getMethod()) {
             case "HEAD":
-                return new CouchHeadRequest(new CouchURI(request.getURI(), request.getMethod()));
+                return new CouchHeadRequest(new CouchURI(request.getURI()));
             case "GET":
-                return new CouchGetRequest(new CouchURI(request.getURI(), request.getMethod()));
+                return new CouchGetRequest(new CouchURI(request.getURI()));
             case "PUT":
                 return new CouchPutRequest((HttpPut) request);
             case "POST":

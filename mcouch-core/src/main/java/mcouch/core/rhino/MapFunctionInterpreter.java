@@ -1,7 +1,6 @@
 package mcouch.core.rhino;
 
 import mcouch.core.couch.indexing.View;
-import mcouch.core.jackson.JSONSerializer;
 
 public class MapFunctionInterpreter {
     private EmitFunction emitFunction;
@@ -13,14 +12,9 @@ public class MapFunctionInterpreter {
         javaScriptInterpreter.defineLink(emitFunction, "javaEmitFunction");
     }
 
-    public void interpret(String mapFunction, Object object) {
-        String jsonedObject = JSONSerializer.toJson(object);
-        String completeJS = String.format("%s (%s) (%s)", EmitFunction.EMIT_FUNCTION, mapFunction, jsonedObject);
+    public void interpret(String mapFunction, String document) {
+        String completeJS = String.format("%s (%s) (%s)", EmitFunction.EMIT_FUNCTION, mapFunction, document);
         javaScriptInterpreter.interpret(completeJS);
-    }
-
-    public EmitFunction emitFunction() {
-        return emitFunction;
     }
 
     public void emitOn(View view) {

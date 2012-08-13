@@ -4,15 +4,15 @@ import mcouch.core.rhino.DocumentFunctions;
 
 public class ViewGroup {
     private final String name;
-    private ViewsDefinition viewsDefinition;
+    private ViewGroupDefinition viewGroupDefinition;
 
     public ViewGroup(String name, String document, DocumentFunctions documentFunctions) {
         this.name = name;
-        viewsDefinition = ViewsDefinition.create(document, documentFunctions);
+        viewGroupDefinition = ViewGroupDefinition.create(document, documentFunctions);
     }
 
-    public ViewsDefinition definition() {
-        return viewsDefinition;
+    public ViewGroupDefinition definition() {
+        return viewGroupDefinition;
     }
 
     @Override
@@ -27,5 +27,9 @@ public class ViewGroup {
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+    public String id() {
+        return "_design/" + name;
     }
 }

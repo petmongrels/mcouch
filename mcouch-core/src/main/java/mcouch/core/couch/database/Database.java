@@ -1,24 +1,31 @@
 package mcouch.core.couch.database;
 
 import mcouch.core.couch.AllDocuments;
+import mcouch.core.couch.indexing.IndexEntry;
+import mcouch.core.couch.indexing.IndexKey;
 import mcouch.core.couch.indexing.Indexes;
 import mcouch.core.couch.indexing.View;
+import mcouch.core.couch.indexing.query.IndexQuery;
 import mcouch.core.couch.view.ViewDefinition;
 import mcouch.core.couch.view.ViewGroup;
-import mcouch.core.couch.view.ViewsDefinition;
+import mcouch.core.couch.view.ViewGroupDefinition;
 import mcouch.core.http.response.SuccessfulDocumentCreateResponse;
+import mcouch.core.http.response.ViewDocumentResponse;
+import mcouch.core.http.response.ViewDocumentsResponse;
+import mcouch.core.jackson.JSONSerializer;
 import mcouch.core.rhino.DocumentFunctions;
 import mcouch.core.rhino.JavaScriptInterpreter;
 import mcouch.core.rhino.MapFunctionInterpreter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NavigableMap;
 
 public class Database {
     private AllDocuments allDocuments;
-    private List<ViewGroup> viewGroups = new ArrayList<>();
+    private Map<String, ViewGroup> viewGroups = new HashMap<>();
     private Indexes indexes;
-    private static String QueryResult = "{\"total_rows\":{0},\"offset\":0,\"rows\":[";
+    private static String QueryResult = "{\"total_rows\":%s,\"offset\":0,\"rows\":[";
 
     private String name;
     private final DocumentFunctions documentFunctions;
@@ -30,8 +37,10 @@ public class Database {
         documentFunctions = new DocumentFunctions(javaScriptInterpreter);
     }
 
-    public void createViewGroup(String viewGroupName, String document) {
-        viewGroups.add(new ViewGroup(viewGroupName, document, documentFunctions));
+    public ViewGroup createViewGroup(String viewGroupName, String document) {
+        ViewGroup viewGroup = new ViewGroup(viewGroupName, document, documentFunctions);
+        viewGroups.put(viewGroupName, viewGroup);
+        return viewGroup;
     }
 
     @Override
@@ -54,26 +63,29 @@ public class Database {
     }
 
     public boolean containsViewGroup(String viewGroupName) {
-        return viewGroups.contains(new ViewGroup(viewGroupName, "{}", documentFunctions));
+        return viewGroups.containsKey(viewGroupName);
     }
 
     public ViewGroup viewGroup(String name) {
-        return viewGroups.get(viewGroups.indexOf(new ViewGroup(name, null, documentFunctions)));
+        return viewGroups.get(name);
     }
 
-    public String executeView(String viewGroupName, String viewName) {
+    public String executeView(String viewGroupName, String viewName, IndexQuery indexQuery) {
         ViewGroup viewGroup = viewGroup(viewGroupName);
-        ViewsDefinition viewsDefinition = viewGroup.definition();
-        ViewDefinition viewDefinition = viewsDefinition.getView(viewName);
+        ViewGroupDefinition viewGroupDefinition = viewGroup.definition();
+        ViewDefinition viewDefinition = viewGroupDefinition.getView(viewName);
         View view = indexes.buildIndex(viewName, viewDefinition.mapFunction(), allDocuments);
-        List<String> matchingDocuments = allDocuments.getAll(view.all());
 
-        StringBuilder stringBuilder = new StringBuilder(45 + matchingDocuments.size() * 100);
-        stringBuilder.append(String.format(QueryResult, matchingDocuments.size()));
-        for (String matchingDocument : matchingDocuments)
-            stringBuilder.append(matchingDocument).append(",");
-        stringBuilder.append("]}");
-        return stringBuilder.toString();
+        NavigableMap<IndexKey,IndexEntry> map = indexQuery.execute(view);
+        ViewDocumentsResponse viewDocumentsResponse = new ViewDocumentsResponse(allDocuments.size(), 0);
+        for (IndexKey indexKey : map.keySet()) {
+            IndexEntry indexEntry = map.get(indexKey);
+            for (String documentId : indexEntry.documentIds()) {
+                ViewDocumentResponse viewDocumentResponse = new ViewDocumentResponse(documentId, indexKey.indexedValue(), documentId, allDocuments.get(documentId));
+                viewDocumentsResponse.add(viewDocumentResponse);
+            }
+        }
+        return JSONSerializer.toJson(viewDocumentsResponse);
     }
 
     public SuccessfulDocumentCreateResponse addDocument(String document) {
@@ -82,5 +94,13 @@ public class Database {
 
     public String get(String documentId) {
         return allDocuments.get(documentId);
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public SuccessfulDocumentCreateResponse updateDocument(String document) {
+        return allDocuments.update(document);
     }
 }

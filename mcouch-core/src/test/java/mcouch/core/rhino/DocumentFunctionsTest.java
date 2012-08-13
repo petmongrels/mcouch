@@ -10,8 +10,9 @@ public class DocumentFunctionsTest {
     @Test
     public void writeRevision() {
         String json = "{\"_id\": \"_design/AdherenceLog\"}";
-        String changedJson = TestContext.DOCUMENT_FUNCTIONS.updateExistingDocument(json);
+        String changedJson = TestContext.DOCUMENT_FUNCTIONS.updateExistingDocument(json, "abc");
         assertTrue(changedJson.contains("_rev"));
+        assertTrue(changedJson.contains("abc"));
     }
 
     @Test

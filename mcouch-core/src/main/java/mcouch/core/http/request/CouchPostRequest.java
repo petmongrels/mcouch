@@ -8,15 +8,13 @@ import mcouch.core.jackson.JSONSerializer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 
-import java.util.UUID;
-
 public class CouchPostRequest implements CouchRequest {
     private HttpPost request;
     private CouchURI uri;
 
     public CouchPostRequest(HttpPost request) {
         this.request = request;
-        uri = new CouchURI(request.getURI(), request.getMethod());
+        uri = new CouchURI(request.getURI());
     }
 
     @Override

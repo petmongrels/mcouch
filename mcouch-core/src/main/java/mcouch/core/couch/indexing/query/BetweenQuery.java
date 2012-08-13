@@ -1,23 +1,22 @@
 package mcouch.core.couch.indexing.query;
 
-import mcouch.core.couch.indexing.View;
+import mcouch.core.couch.indexing.IndexEntry;
 import mcouch.core.couch.indexing.IndexKey;
+import mcouch.core.couch.indexing.View;
 
-import java.util.*;
+import java.util.NavigableMap;
 
 public class BetweenQuery implements IndexQuery {
-    private View view;
     private final IndexKey startKey;
     private final IndexKey endKey;
 
-    public BetweenQuery(View view, IndexKey startKey, IndexKey endKey) {
-        this.view = view;
-        this.startKey = startKey;
-        this.endKey = endKey;
+    public BetweenQuery(String start, String end) {
+        this.startKey = new IndexKey(start);
+        this.endKey = new IndexKey(end);
     }
 
     @Override
-    public List<String> execute() {
+    public NavigableMap<IndexKey, IndexEntry> execute(View view) {
         return view.itemsBetween(startKey, endKey);
     }
 }

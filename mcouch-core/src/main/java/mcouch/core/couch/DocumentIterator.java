@@ -1,5 +1,5 @@
 package mcouch.core.couch;
 
 public interface DocumentIterator {
-    void iterate(String id, Object document);
+    void iterate(String id, String document);
 }

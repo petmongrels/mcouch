@@ -2,11 +2,12 @@ package mcouch.core.couch;
 
 import junit.framework.Assert;
 import mcouch.core.TestContext;
+import mcouch.core.couch.indexing.IndexEntry;
 import mcouch.core.couch.indexing.IndexKey;
 import mcouch.core.couch.indexing.View;
 import org.junit.Test;
 
-import java.util.List;
+import java.util.NavigableMap;
 
 public class IndexTest {
     @Test
@@ -18,7 +19,7 @@ public class IndexTest {
         view.addOrUpdate("esa", "4");
         view.addOrUpdate("pds", "5");
         view.addOrUpdate("sfs", "6");
-        List<String> docIds = view.itemsBetween(new IndexKey("abc"), new IndexKey("esa"));
-        Assert.assertEquals(2, docIds.size());
+        NavigableMap<IndexKey,IndexEntry> map = view.itemsBetween(new IndexKey("abc"), new IndexKey("esa"));
+        Assert.assertEquals(2, map.size());
     }
 }

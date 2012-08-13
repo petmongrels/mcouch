@@ -1,7 +1,5 @@
 package mcouch.core.rhino;
 
-import java.util.UUID;
-
 public class DocumentFunctions {
     private JavaScriptInterpreter javaScriptInterpreter;
     public static String UpdateExistingDocument = "(function updateExistingDocument(doc, rev){doc._rev = rev; return doc;}) (%s, \"%s\")";
@@ -12,8 +10,8 @@ public class DocumentFunctions {
         this.javaScriptInterpreter = javaScriptInterpreter;
     }
 
-    public String updateExistingDocument(String json) {
-        Object updatedDoc = javaScriptInterpreter.interpret(String.format(UpdateExistingDocument, json, UUID.randomUUID().toString()));
+    public String updateExistingDocument(String json, String revision) {
+        Object updatedDoc = javaScriptInterpreter.interpret(String.format(UpdateExistingDocument, json, revision));
         return javaScriptInterpreter.stringiFy(updatedDoc);
     }
 

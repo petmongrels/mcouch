@@ -18,6 +18,7 @@ public class HttpParamsStub implements HttpParams {
         throw new NotImplementedException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public HttpParams copy() {
         throw new NotImplementedException();

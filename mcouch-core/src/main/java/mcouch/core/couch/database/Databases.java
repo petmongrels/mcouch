@@ -3,30 +3,30 @@ package mcouch.core.couch.database;
 import mcouch.core.rhino.JavaScriptInterpreter;
 import mcouch.core.rhino.MapFunctionInterpreter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Databases {
-    private List<Database> items = new ArrayList<>();
+    private Map<String, Database> items = new HashMap<>();
     private final MapFunctionInterpreter mapFunctionInterpreter;
     private JavaScriptInterpreter javaScriptInterpreter;
 
     public Databases(Database... databases) {
         javaScriptInterpreter = new JavaScriptInterpreter();
         mapFunctionInterpreter = new MapFunctionInterpreter(javaScriptInterpreter);
-        items.addAll(Arrays.asList(databases));
+        for (Database database : databases)
+            items.put(database.name(), database);
     }
 
     public boolean contains(String databaseName) {
-        return items.contains(new Database(databaseName, mapFunctionInterpreter, javaScriptInterpreter));
+        return items.containsKey(databaseName.toLowerCase());
     }
 
     public Database getDatabase(String databaseName) {
-        return items.get(items.indexOf(new Database(databaseName, mapFunctionInterpreter, javaScriptInterpreter)));
+        return items.get(databaseName.toLowerCase());
     }
 
     public void create(String databaseName) {
-        items.add(new Database(databaseName, mapFunctionInterpreter, javaScriptInterpreter));
+        items.put(databaseName.toLowerCase(), new Database(databaseName, mapFunctionInterpreter, javaScriptInterpreter));
     }
 }

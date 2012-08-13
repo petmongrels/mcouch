@@ -34,19 +34,27 @@ public class AllDocuments {
     public void doForAllDocuments(DocumentIterator documentIterator) {
         Set<String> docIds = all.keySet();
         for (String docId : docIds) {
-            Object document = all.get(docId);
+            String document = all.get(docId);
             documentIterator.iterate(docId, document);
         }
     }
 
-    public List<String> getAll(List<String> documentIds) {
-        List<String> documents = new ArrayList<>(documentIds.size());
+    public Map<String, String> getAll(List<String> documentIds) {
+        Map<String, String> documents = new HashMap<>(documentIds.size());
         for (String documentId : documentIds)
-            documents.add(get(documentId));
+            documents.put(documentId, get(documentId));
         return documents;
     }
 
     public int size() {
         return all.size();
+    }
+
+    public SuccessfulDocumentCreateResponse update(String document) {
+        String documentId = documentFunctions.getDocumentId(document);
+        String newRevision = UUID.randomUUID().toString();
+        String updatedDocument = documentFunctions.updateExistingDocument(document, newRevision);
+        all.put(documentId, updatedDocument);
+        return new SuccessfulDocumentCreateResponse(documentId, newRevision);
     }
 }

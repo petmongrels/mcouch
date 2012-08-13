@@ -44,6 +44,6 @@ public class CouchHeadRequestTest {
 
     private CouchHeadRequest request(String uriString) throws URISyntaxException {
         URI uri = new URI(uriString);
-        return new CouchHeadRequest(new CouchURI(uri, "HEAD"));
+        return new CouchHeadRequest(new CouchURI(uri));
     }
 }

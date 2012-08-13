@@ -11,24 +11,26 @@ public class CouchURI {
     private String databaseName;
     private String viewGroup;
     private String viewName;
-    private String key;
-    private boolean bulkPost;
+    private boolean bulkDocs;
     private String documentId;
+    private boolean includeDocs;
+    private String key;
+    private String startKey;
+    private String endKey;
 
-    public CouchURI(URI uri, String method) {
+    public CouchURI(URI uri) {
         String uriPath = uri.getPath();
         StringTokenizer pathTokenizer = new StringTokenizer(uriPath, "/");
         if (pathTokenizer.countTokens() >= 1)
             databaseName = pathTokenizer.nextToken();
-        if (method.equals("GET") && pathTokenizer.countTokens() == 1) {
-            documentId = pathTokenizer.nextToken();
+
+        if (pathTokenizer.countTokens() == 1) {
+            String nextToken = pathTokenizer.nextToken();
+            bulkDocs = nextToken.equals("_bulk_docs");
+            documentId = bulkDocs ? null : nextToken;
             return;
         }
 
-        if (method.equals("POST") && pathTokenizer.countTokens() == 1 && pathTokenizer.nextToken().equals("_bulk_docs")) {
-            bulkPost = true;
-            return;
-        }
 
         if (pathTokenizer.countTokens() >= 2 && pathTokenizer.nextToken().equals("_design"))
             viewGroup = pathTokenizer.nextToken();
@@ -38,12 +40,26 @@ public class CouchURI {
 
         List<NameValuePair> queryParams = URLEncodedUtils.parse(uri, "UTF-8");
         for (NameValuePair nameValuePair : queryParams) {
+            String value = nameValuePair.getValue();
             switch (nameValuePair.getName()) {
                 case "key":
-                    String value = nameValuePair.getValue();
-                    key = value.substring(1, value.length() - 1);
+                    key = removeQuotes(value);
+                    break;
+                case "include_docs":
+                    includeDocs = Boolean.parseBoolean(value);
+                    break;
+                case "startkey":
+                    startKey = removeQuotes(value);
+                    break;
+                case "endkey":
+                    endKey = removeQuotes(value);
+                    break;
             }
         }
+    }
+
+    private String removeQuotes(String value) {
+        return value.substring(1, value.length() - 1);
     }
 
     public String databaseName() {
@@ -58,10 +74,6 @@ public class CouchURI {
         return viewName;
     }
 
-    public String key() {
-        return key;
-    }
-
     public boolean isGetViewDocRequest() {
         return databaseName != null && viewGroup != null && viewName == null;
     }
@@ -71,18 +83,30 @@ public class CouchURI {
     }
 
     public boolean isBulkDocsRequest() {
-        return databaseName != null && bulkPost;
+        return databaseName != null && bulkDocs;
     }
 
-    public boolean isBulkPost() {
-        return bulkPost;
+    public boolean isBulkDocs() {
+        return bulkDocs;
     }
 
-    public boolean isGetDocRequest() {
+    public boolean isDocRequest() {
         return documentId != null;
     }
 
     public String documentId() {
         return documentId;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getStartKey() {
+        return startKey;
+    }
+
+    public String getEndKey() {
+        return endKey;
     }
 }

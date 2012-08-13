@@ -2,9 +2,9 @@ package mcouch.core;
 
 import mcouch.core.couch.database.Databases;
 import mcouch.core.http.ClientConnectionManagerStub;
-import mcouch.core.http.request.CouchHttpRequestFactory;
 import mcouch.core.http.HttpParamsStub;
 import mcouch.core.http.NotImplementedException;
+import mcouch.core.http.request.CouchHttpRequestFactory;
 import mcouch.core.http.request.CouchRequest;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -48,7 +48,7 @@ public class InMemoryCouchDb implements HttpClient {
     }
 
     private HttpResponse execute(HttpRequestBase httpRequestBase) {
-        logger.info(String.format("%s---%s", httpRequestBase.getURI().toString(), httpRequestBase.getMethod()));
+        logger.debug(String.format("%s---%s", httpRequestBase.getURI().toString(), httpRequestBase.getMethod()));
         CouchRequest couchRequest = CouchHttpRequestFactory.create(httpRequestBase);
         return couchRequest.execute(databases);
     }

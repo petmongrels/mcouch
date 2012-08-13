@@ -1,24 +1,20 @@
 package mcouch.core.couch.indexing.query;
 
-import mcouch.core.couch.indexing.View;
 import mcouch.core.couch.indexing.IndexEntry;
 import mcouch.core.couch.indexing.IndexKey;
+import mcouch.core.couch.indexing.View;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.NavigableMap;
 
 public class SimpleQuery implements IndexQuery {
-    private View view;
     private final IndexKey indexKey;
 
-    public SimpleQuery(View view, IndexKey indexKey) {
-        this.view = view;
-        this.indexKey = indexKey;
+    public SimpleQuery(String key) {
+        this.indexKey = new IndexKey(key);
     }
 
     @Override
-    public List<String> execute() {
-        IndexEntry indexEntry = view.get(indexKey);
-        return indexEntry == null ? new ArrayList<String>() : indexEntry.documentIds();
+    public NavigableMap<IndexKey, IndexEntry> execute(View view) {
+        return view.get(indexKey);
     }
 }
