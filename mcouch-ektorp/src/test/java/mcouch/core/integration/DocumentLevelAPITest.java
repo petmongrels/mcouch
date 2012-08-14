@@ -50,4 +50,13 @@ public class DocumentLevelAPITest {
         List<SampleEntity> list = sampleRepository.findByAInRange("anything", "dfd");
         assertEquals(1, list.size());
     }
+
+    @Test
+    public void numberOfDocumentsUsingReduceFunction() {
+        SampleRepository sampleRepository = new SampleRepository(dbConnector);
+        dbConnector.create(new SampleEntity("anything"));
+        dbConnector.create(new SampleEntity("something"));
+        int count = sampleRepository.numberOfItemsInRange("anything", "dfd");
+        assertEquals(1, count);
+    }
 }

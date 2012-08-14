@@ -6,6 +6,7 @@ import mcouch.core.couch.indexing.IndexKey;
 import mcouch.core.couch.indexing.Indexes;
 import mcouch.core.couch.indexing.View;
 import mcouch.core.couch.indexing.query.IndexQuery;
+import mcouch.core.couch.reducers.Reducer;
 import mcouch.core.couch.view.ViewDefinition;
 import mcouch.core.couch.view.ViewGroup;
 import mcouch.core.couch.view.ViewGroupDefinition;
@@ -25,7 +26,7 @@ public class Database {
     private AllDocuments allDocuments;
     private Map<String, ViewGroup> viewGroups = new HashMap<>();
     private Indexes indexes;
-    private static String QueryResult = "{\"total_rows\":%s,\"offset\":0,\"rows\":[";
+    public static String ReducedResult = "{\"rows\":[{\"key\":null,\"value\":%s}]}";
 
     private String name;
     private final DocumentFunctions documentFunctions;
@@ -70,22 +71,27 @@ public class Database {
         return viewGroups.get(name);
     }
 
-    public String executeView(String viewGroupName, String viewName, IndexQuery indexQuery) {
+    public String executeView(String viewGroupName, String viewName, IndexQuery indexQuery, boolean doReduce) {
         ViewGroup viewGroup = viewGroup(viewGroupName);
         ViewGroupDefinition viewGroupDefinition = viewGroup.definition();
         ViewDefinition viewDefinition = viewGroupDefinition.getView(viewName);
-        View view = indexes.buildIndex(viewName, viewDefinition.mapFunction(), allDocuments);
+        View view = indexes.buildIndex(viewName, viewDefinition.map, allDocuments);
 
-        NavigableMap<IndexKey,IndexEntry> map = indexQuery.execute(view);
-        ViewDocumentsResponse viewDocumentsResponse = new ViewDocumentsResponse(allDocuments.size(), 0);
-        for (IndexKey indexKey : map.keySet()) {
-            IndexEntry indexEntry = map.get(indexKey);
-            for (String documentId : indexEntry.documentIds()) {
-                ViewDocumentResponse viewDocumentResponse = new ViewDocumentResponse(documentId, indexKey.indexedValue(), documentId, allDocuments.get(documentId));
-                viewDocumentsResponse.add(viewDocumentResponse);
+        NavigableMap<IndexKey, IndexEntry> map = indexQuery.execute(view);
+        Reducer reducer = viewDefinition.reducer();
+        if (doReduce) {
+            return String.format(ReducedResult, reducer.reduce(map));
+        } else {
+            ViewDocumentsResponse viewDocumentsResponse = new ViewDocumentsResponse(allDocuments.size(), 0);
+            for (IndexKey indexKey : map.keySet()) {
+                IndexEntry indexEntry = map.get(indexKey);
+                for (String documentId : indexEntry.documentIds()) {
+                    ViewDocumentResponse viewDocumentResponse = new ViewDocumentResponse(documentId, indexKey.indexedValue(), documentId, allDocuments.get(documentId));
+                    viewDocumentsResponse.add(viewDocumentResponse);
+                }
             }
+            return JSONSerializer.toJson(viewDocumentsResponse);
         }
-        return JSONSerializer.toJson(viewDocumentsResponse);
     }
 
     public SuccessfulDocumentCreateResponse addDocument(String document) {

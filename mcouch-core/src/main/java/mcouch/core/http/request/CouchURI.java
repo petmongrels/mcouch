@@ -17,6 +17,7 @@ public class CouchURI {
     private String key;
     private String startKey;
     private String endKey;
+    private boolean reduce = true;
 
     public CouchURI(URI uri) {
         String uriPath = uri.getPath();
@@ -54,6 +55,8 @@ public class CouchURI {
                 case "endkey":
                     endKey = removeQuotes(value);
                     break;
+                case "reduce":
+                    reduce = Boolean.parseBoolean(value);
             }
         }
     }
@@ -108,5 +111,9 @@ public class CouchURI {
 
     public String getEndKey() {
         return endKey;
+    }
+
+    public boolean isReduce() {
+        return reduce;
     }
 }
