@@ -16,8 +16,10 @@ public class CouchHttpRequestFactory {
                 return new CouchPutRequest((HttpPut) request);
             case "POST":
                 return new CouchPostRequest((HttpPost) request);
+            case "DELETE":
+                return new CouchDeleteRequest(new CouchURI(request.getURI()));
             default:
-                throw new NotImplementedException();
+                throw new NotImplementedException(String.format("%s as Couch HTTP Request", request.getMethod()));
         }
     }
 }

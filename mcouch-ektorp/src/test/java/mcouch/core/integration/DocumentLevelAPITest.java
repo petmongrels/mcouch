@@ -93,4 +93,14 @@ public class DocumentLevelAPITest {
         toDelete.add(new BulkDeleteDocument(something.getId(), something.getRevision()));
         dbConnector.executeBulk(toDelete);
     }
+
+    @Test
+    public void delete() {
+        SampleRepository sampleRepository = new SampleRepository(dbConnector);
+        SampleEntity anything = new SampleEntity("anything");
+        dbConnector.create(anything);
+        assertEquals(1, sampleRepository.getAll().size());
+        dbConnector.delete(anything);
+        assertEquals(0, sampleRepository.getAll().size());
+    }
 }

@@ -19,6 +19,7 @@ public class CouchURI {
     private String endKey;
     private boolean reduce = true;
     private boolean allDocs;
+    private String rev;
 
     public CouchURI(URI uri) {
         String uriPath = uri.getPath();
@@ -58,6 +59,10 @@ public class CouchURI {
                     break;
                 case "reduce":
                     reduce = Boolean.parseBoolean(value);
+                    break;
+                case "rev":
+                    rev = removeQuotes(value);
+                    break;
             }
         }
     }
@@ -120,5 +125,9 @@ public class CouchURI {
 
     public boolean isAllDocsRequest() {
         return allDocs;
+    }
+
+    public String getRev() {
+        return rev;
     }
 }
