@@ -31,10 +31,10 @@ public class CouchGetRequest implements CouchRequest {
         if (uri.isDocRequest()) {
             return StandardHttpResponse.okWith(database.get(uri.documentId()));
         }
-        if (uri.isExecuteViewRequest()) {
+        if (uri.isAllDocsRequest() || uri.isExecuteViewRequest()) {
             IndexQuery indexQuery = IndexQueryFactory.create(uri);
             String response = database.executeView(uri.viewGroup(), uri.viewName(), indexQuery, uri.isReduce());
-            logger.debug(response);
+            logger.info(response);
             return StandardHttpResponse.okWith(response);
         }
         return null;

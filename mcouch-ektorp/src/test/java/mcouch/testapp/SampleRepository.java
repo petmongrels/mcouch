@@ -3,6 +3,7 @@ package mcouch.testapp;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.ViewResult;
+import org.ektorp.support.GenerateView;
 import org.ektorp.support.View;
 
 import java.util.List;
@@ -11,6 +12,12 @@ public class SampleRepository extends org.ektorp.support.CouchDbRepositorySuppor
     public SampleRepository(CouchDbConnector db) {
         super(SampleEntity.class, db);
         initStandardDesignDocument();
+    }
+
+    @View(name = "by_a_without_reduce", map = "function(doc) { if(doc.type == 'Sample' && doc.a) {emit(doc.a, doc._id)} }")
+    public List<SampleEntity> findByAWithoutReduce(String a) {
+        ViewQuery find_by_a = createQuery("by_a_without_reduce").key(a.toLowerCase()).includeDocs(true).reduce(false);
+        return db.queryView(find_by_a, SampleEntity.class);
     }
 
     @View(name = "by_a", map = "function(doc) { if(doc.type == 'Sample' && doc.a) {emit(doc.a, doc._id)} }", reduce = "_count")
@@ -29,5 +36,11 @@ public class SampleRepository extends org.ektorp.support.CouchDbRepositorySuppor
         ViewResult viewResult = db.queryView(q);
         List<ViewResult.Row> rows = viewResult.getRows();
         return rows.size() == 0 ? 0 : rows.get(0).getValueAsInt();
+    }
+
+    @Override
+    @GenerateView
+    public List<SampleEntity> getAll() {
+        return super.getAll();
     }
 }

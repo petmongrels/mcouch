@@ -45,7 +45,7 @@ public class View implements DocumentIterator {
     }
 
     public void addOrUpdate(String indexValue, String docId) {
-        IndexKey indexKey = new IndexKey(indexValue);
+        IndexKey indexKey = IndexKeyFactory.create(indexValue);
         IndexEntry indexEntry = treeMap.get(indexKey);
         if (indexEntry == null) treeMap.put(indexKey, new IndexEntry(docId));
         else
@@ -58,5 +58,9 @@ public class View implements DocumentIterator {
 
     public NavigableMap<IndexKey, IndexEntry> itemsBetween(IndexKey startKey, IndexKey endKey) {
         return treeMap.subMap(startKey, true, endKey, true);
+    }
+
+    public NavigableMap<IndexKey, IndexEntry> all() {
+        return treeMap;
     }
 }

@@ -20,11 +20,6 @@ public class EmitFunction {
         view.addOrUpdate(indexValue, docId);
     }
 
-    public void emit(String[] indexValues, String docId) {
-        assertIndexNotNull();
-        view.addOrUpdate(toJson(indexValues).toString(), docId);
-    }
-
     private void assertIndexNotNull() {
         if (view == null) {
             throw new AssertionError("No view set, which can be updated");

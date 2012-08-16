@@ -18,6 +18,7 @@ public class CouchURI {
     private String startKey;
     private String endKey;
     private boolean reduce = true;
+    private boolean allDocs;
 
     public CouchURI(URI uri) {
         String uriPath = uri.getPath();
@@ -28,10 +29,10 @@ public class CouchURI {
         if (pathTokenizer.countTokens() == 1) {
             String nextToken = pathTokenizer.nextToken();
             bulkDocs = nextToken.equals("_bulk_docs");
-            documentId = bulkDocs ? null : nextToken;
+            allDocs = nextToken.equals("_all_docs");
+            documentId = (bulkDocs || allDocs) ? null : nextToken;
             return;
         }
-
 
         if (pathTokenizer.countTokens() >= 2 && pathTokenizer.nextToken().equals("_design"))
             viewGroup = pathTokenizer.nextToken();
@@ -115,5 +116,9 @@ public class CouchURI {
 
     public boolean isReduce() {
         return reduce;
+    }
+
+    public boolean isAllDocsRequest() {
+        return allDocs;
     }
 }

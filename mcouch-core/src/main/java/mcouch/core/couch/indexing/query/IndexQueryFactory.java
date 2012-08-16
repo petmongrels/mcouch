@@ -6,6 +6,6 @@ public class IndexQueryFactory {
     public static IndexQuery create(CouchURI couchURI) {
         if (couchURI.getKey() != null) return new SimpleQuery(couchURI.getKey());
         if (couchURI.getStartKey() != null) return new BetweenQuery(couchURI.getStartKey(), couchURI.getEndKey());
-        return null;
+        return new AllQuery();
     }
 }

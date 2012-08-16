@@ -79,7 +79,7 @@ public class Database {
 
         NavigableMap<IndexKey, IndexEntry> map = indexQuery.execute(view);
         Reducer reducer = viewDefinition.reducer();
-        if (doReduce) {
+        if (doReduce && reducer != null) {
             return String.format(ReducedResult, reducer.reduce(map));
         } else {
             ViewDocumentsResponse viewDocumentsResponse = new ViewDocumentsResponse(allDocuments.size(), 0);

@@ -1,5 +1,6 @@
 package mcouch.core.integration;
 
+import mcouch.testapp.AnotherSampleEntity;
 import mcouch.testapp.SampleEntity;
 import mcouch.testapp.SampleRepository;
 import org.ektorp.impl.StdCouchDbConnector;
@@ -18,6 +19,7 @@ public class DocumentLevelAPITest {
     public void setup() throws Exception {
         dbConnector = InMemoryCouchDbInstanceFactoryForTest.create("fooDb");
 //        dbConnector = CouchDbInstanceFactoryForTest.create("foodb");
+        dbConnector.create(new AnotherSampleEntity());
     }
 
     @Test
@@ -58,5 +60,23 @@ public class DocumentLevelAPITest {
         dbConnector.create(new SampleEntity("something"));
         int count = sampleRepository.numberOfItemsInRange("anything", "dfd");
         assertEquals(1, count);
+    }
+
+    @Test
+    public void findByAWithoutReduce() {
+        SampleRepository sampleRepository = new SampleRepository(dbConnector);
+        dbConnector.create(new SampleEntity("anything"));
+        dbConnector.create(new SampleEntity("something"));
+        List<SampleEntity> list = sampleRepository.findByAWithoutReduce("anything");
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    public void getAll() {
+        SampleRepository sampleRepository = new SampleRepository(dbConnector);
+        dbConnector.create(new SampleEntity("anything"));
+        dbConnector.create(new SampleEntity("something"));
+        List<SampleEntity> list = sampleRepository.getAll();
+        assertEquals(2, list.size());
     }
 }

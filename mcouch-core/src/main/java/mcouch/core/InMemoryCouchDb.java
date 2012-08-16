@@ -48,7 +48,7 @@ public class InMemoryCouchDb implements HttpClient {
     }
 
     private HttpResponse execute(HttpRequestBase httpRequestBase) {
-        logger.debug(String.format("%s---%s", httpRequestBase.getURI().toString(), httpRequestBase.getMethod()));
+        logger.info(String.format("%s---%s", httpRequestBase.getURI().toString(), httpRequestBase.getMethod()));
         CouchRequest couchRequest = CouchHttpRequestFactory.create(httpRequestBase);
         return couchRequest.execute(databases);
     }
