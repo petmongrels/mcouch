@@ -3,11 +3,13 @@ package mcouch.core.integration;
 import mcouch.testapp.AnotherSampleEntity;
 import mcouch.testapp.SampleEntity;
 import mcouch.testapp.SampleRepository;
+import org.ektorp.BulkDeleteDocument;
 import org.ektorp.impl.StdCouchDbConnector;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -78,5 +80,17 @@ public class DocumentLevelAPITest {
         dbConnector.create(new SampleEntity("something"));
         List<SampleEntity> list = sampleRepository.getAll();
         assertEquals(2, list.size());
+    }
+
+    @Test
+    public void deleteAll() {
+        SampleEntity anything = new SampleEntity("anything");
+        dbConnector.create(anything);
+        SampleEntity something = new SampleEntity("something");
+        dbConnector.create(something);
+        ArrayList<BulkDeleteDocument> toDelete = new ArrayList<>();
+        toDelete.add(new BulkDeleteDocument(anything.getId(), anything.getRevision()));
+        toDelete.add(new BulkDeleteDocument(something.getId(), something.getRevision()));
+        dbConnector.executeBulk(toDelete);
     }
 }

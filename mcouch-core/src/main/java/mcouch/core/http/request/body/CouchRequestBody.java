@@ -1,4 +1,4 @@
-package mcouch.core.http.request;
+package mcouch.core.http.request.body;
 
 import mcouch.core.http.MCouchException;
 import org.apache.commons.io.IOUtils;

@@ -4,6 +4,7 @@ import mcouch.core.couch.database.Database;
 import mcouch.core.couch.database.Databases;
 import mcouch.core.couch.view.ViewGroup;
 import mcouch.core.http.StandardHttpResponse;
+import mcouch.core.http.request.body.CouchRequestBody;
 import mcouch.core.http.response.SuccessfulDocumentCreateResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;

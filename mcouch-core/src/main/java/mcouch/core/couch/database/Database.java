@@ -109,4 +109,8 @@ public class Database {
     public SuccessfulDocumentCreateResponse updateDocument(String document) {
         return allDocuments.update(document);
     }
+
+    public void delete(String id) {
+        allDocuments.remove(id);
+    }
 }

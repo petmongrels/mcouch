@@ -1,5 +1,6 @@
 package mcouch.core.jackson;
 
+import mcouch.core.http.MCouchException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class JSONSerializer {
         try {
             return mapper.readValue(jsonString, rootClass);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new MCouchException(String.format("Cannot deserialize from: %s to class of type: %s", jsonString, rootClass.getSimpleName()), e);
         }
     }
 }
