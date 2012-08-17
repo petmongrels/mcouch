@@ -68,7 +68,7 @@ public class CouchURI {
     }
 
     private String removeQuotes(String value) {
-        return value.substring(1, value.length() - 1);
+        return value.replace("\"", "").replace("[", "").replace("]", "");
     }
 
     public String databaseName() {

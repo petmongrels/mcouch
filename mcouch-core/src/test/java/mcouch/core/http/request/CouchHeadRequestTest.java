@@ -17,14 +17,14 @@ public class CouchHeadRequestTest {
     @Test
     public void databaseDoesntExist() throws URISyntaxException {
         CouchHeadRequest couchHeadRequest = request("/motech-tb-adherence/");
-        Databases databases = new Databases();
+        Databases databases = new Databases(TestContext.JAVA_SCRIPT_INTERPRETER, TestContext.MAP_FUNCTION_INTERPRETER);
         assertEquals(HttpStatus.SC_NOT_FOUND, executionStatus(couchHeadRequest, databases));
     }
 
     @Test
     public void databaseExists() throws URISyntaxException {
         CouchHeadRequest couchHeadRequest = request("/motech-tb-adherence/");
-        Databases databases = new Databases(new Database("motech-tb-adherence", TestContext.MAP_FUNCTION_INTERPRETER, TestContext.JAVA_SCRIPT_INTERPRETER));
+        Databases databases = new Databases(TestContext.JAVA_SCRIPT_INTERPRETER, TestContext.MAP_FUNCTION_INTERPRETER, new Database("motech-tb-adherence", TestContext.MAP_FUNCTION_INTERPRETER, TestContext.JAVA_SCRIPT_INTERPRETER));
         assertEquals(HttpStatus.SC_OK, executionStatus(couchHeadRequest, databases));
     }
 
@@ -33,7 +33,7 @@ public class CouchHeadRequestTest {
         CouchHeadRequest couchHeadRequest = request("/motech-tb-adherence/_design/AdherenceLog");
         Database database = new Database("motech-tb-adherence", TestContext.MAP_FUNCTION_INTERPRETER, TestContext.JAVA_SCRIPT_INTERPRETER);
         database.createViewGroup("AdherenceLog", SampleDocuments.DesignDoc);
-        Databases databases = new Databases(database);
+        Databases databases = new Databases(TestContext.JAVA_SCRIPT_INTERPRETER, TestContext.MAP_FUNCTION_INTERPRETER, database);
         assertEquals(HttpStatus.SC_OK, executionStatus(couchHeadRequest, databases));
     }
 

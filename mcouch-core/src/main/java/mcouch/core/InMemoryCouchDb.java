@@ -6,6 +6,8 @@ import mcouch.core.http.HttpParamsStub;
 import mcouch.core.http.NotImplementedException;
 import mcouch.core.http.request.CouchHttpRequestFactory;
 import mcouch.core.http.request.CouchRequest;
+import mcouch.core.rhino.JavaScriptInterpreter;
+import mcouch.core.rhino.MapFunctionInterpreter;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -23,13 +25,12 @@ import java.io.IOException;
 public class InMemoryCouchDb implements HttpClient {
     private static Logger logger = Logger.getLogger(InMemoryCouchDb.class);
     private Databases databases;
-
-    public InMemoryCouchDb(Databases databases) {
-        this.databases = databases;
-    }
+    private CouchHttpRequestFactory couchHttpRequestFactory;
 
     public InMemoryCouchDb() {
-        this(new Databases());
+        JavaScriptInterpreter javaScriptInterpreter = new JavaScriptInterpreter();
+        this.databases = new Databases(javaScriptInterpreter, new MapFunctionInterpreter(javaScriptInterpreter));
+        this.couchHttpRequestFactory = new CouchHttpRequestFactory();
     }
 
     @Override
@@ -49,7 +50,7 @@ public class InMemoryCouchDb implements HttpClient {
 
     private HttpResponse execute(HttpRequestBase httpRequestBase) {
         logger.info(String.format("%s---%s", httpRequestBase.getURI().toString(), httpRequestBase.getMethod()));
-        CouchRequest couchRequest = CouchHttpRequestFactory.create(httpRequestBase);
+        CouchRequest couchRequest = couchHttpRequestFactory.create(httpRequestBase);
         return couchRequest.execute(databases);
     }
 
@@ -86,5 +87,9 @@ public class InMemoryCouchDb implements HttpClient {
     @Override
     public <T> T execute(HttpHost httpHost, HttpRequest httpRequest, ResponseHandler<? extends T> responseHandler, HttpContext httpContext) throws IOException {
         throw new NotImplementedException();
+    }
+
+    public void createDatabase(String databaseName) {
+        databases.create(databaseName);
     }
 }

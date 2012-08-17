@@ -1,5 +1,6 @@
 package mcouch.testapp;
 
+import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.ViewResult;
@@ -42,5 +43,13 @@ public class SampleRepository extends org.ektorp.support.CouchDbRepositorySuppor
     @GenerateView
     public List<SampleEntity> getAll() {
         return super.getAll();
+    }
+
+    @View(name = "by_a_and_a", map = "function(doc) {if (doc.type == 'Sample') {emit([doc.a, doc.a], doc._id);}}")
+    public List<SampleEntity> findUsingTwoEmittedValues(String a) {
+        ComplexKey startKey = ComplexKey.of(a, a);
+        ComplexKey endKey = ComplexKey.of(a, a);
+        ViewQuery q = createQuery("by_a_and_a").startKey(startKey).endKey(endKey).inclusiveEnd(true).includeDocs(true);
+        return db.queryView(q, SampleEntity.class);
     }
 }

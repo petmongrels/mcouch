@@ -11,9 +11,9 @@ public class Databases {
     private final MapFunctionInterpreter mapFunctionInterpreter;
     private JavaScriptInterpreter javaScriptInterpreter;
 
-    public Databases(Database... databases) {
-        javaScriptInterpreter = new JavaScriptInterpreter();
-        mapFunctionInterpreter = new MapFunctionInterpreter(javaScriptInterpreter);
+    public Databases(JavaScriptInterpreter javaScriptInterpreter, MapFunctionInterpreter mapFunctionInterpreter, Database... databases) {
+        this.javaScriptInterpreter = javaScriptInterpreter;
+        this.mapFunctionInterpreter = mapFunctionInterpreter;
         for (Database database : databases)
             items.put(database.name(), database);
     }

@@ -6,7 +6,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 
 public class CouchHttpRequestFactory {
-    public static CouchRequest create(HttpRequestBase request) {
+    public CouchRequest create(HttpRequestBase request) {
         switch (request.getMethod()) {
             case "HEAD":
                 return new CouchHeadRequest(new CouchURI(request.getURI()));

@@ -103,4 +103,12 @@ public class DocumentLevelAPITest {
         dbConnector.delete(anything);
         assertEquals(0, sampleRepository.getAll().size());
     }
+
+    @Test
+    public void findInARange() {
+        SampleRepository sampleRepository = new SampleRepository(dbConnector);
+        dbConnector.create(new SampleEntity("anything"));
+        dbConnector.create(new SampleEntity("something"));
+        assertEquals(1, sampleRepository.findUsingTwoEmittedValues("anything").size());
+    }
 }
