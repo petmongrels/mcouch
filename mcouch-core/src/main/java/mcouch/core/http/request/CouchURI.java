@@ -46,29 +46,25 @@ public class CouchURI {
             String value = nameValuePair.getValue();
             switch (nameValuePair.getName()) {
                 case "key":
-                    key = removeQuotes(value);
+                    key = value;
                     break;
                 case "include_docs":
                     includeDocs = Boolean.parseBoolean(value);
                     break;
                 case "startkey":
-                    startKey = removeQuotes(value);
+                    startKey = value;
                     break;
                 case "endkey":
-                    endKey = removeQuotes(value);
+                    endKey = value;
                     break;
                 case "reduce":
                     reduce = Boolean.parseBoolean(value);
                     break;
                 case "rev":
-                    rev = removeQuotes(value);
+                    rev = value;
                     break;
             }
         }
-    }
-
-    private String removeQuotes(String value) {
-        return value.replace("\"", "").replace("[", "").replace("]", "");
     }
 
     public String databaseName() {

@@ -9,6 +9,6 @@ public class IndexKeyComparator implements Comparator<IndexKey> {
     }
 
     private String indexedValue(IndexKey o1) {
-        return o1.indexedValue() == null ? "" : o1.indexedValue();
+        return o1.value() == null ? "" : o1.value();
     }
 }

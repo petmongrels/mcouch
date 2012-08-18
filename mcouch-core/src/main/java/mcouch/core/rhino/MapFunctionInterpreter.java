@@ -12,8 +12,9 @@ public class MapFunctionInterpreter {
         javaScriptInterpreter.defineLink(emitFunction, "javaEmitFunction");
     }
 
-    public void interpret(String mapFunction, String document) {
+    public void interpret(String mapFunction, String docId, String document) {
         String completeJS = String.format("%s (%s) (%s)", EmitFunction.EMIT_FUNCTION, mapFunction, document);
+        emitFunction.currentDoc(docId);
         javaScriptInterpreter.interpret(completeJS);
     }
 

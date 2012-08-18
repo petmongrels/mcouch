@@ -11,14 +11,14 @@ public class ViewDocumentsResponse {
     @JsonProperty
     private int offset;
     @JsonProperty
-    private List<ViewDocumentResponse> rows = new ArrayList<>();
+    private List rows = new ArrayList();
 
     public ViewDocumentsResponse(int total_rows, int offset) {
         this.total_rows = total_rows;
         this.offset = offset;
     }
 
-    public void add(ViewDocumentResponse viewDocumentResponse) {
-        rows.add(viewDocumentResponse);
+    public void add(Object object) {
+        rows.add(object);
     }
 }

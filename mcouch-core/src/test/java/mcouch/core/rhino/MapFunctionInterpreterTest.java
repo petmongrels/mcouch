@@ -37,10 +37,10 @@ public class MapFunctionInterpreterTest {
         View view = new View("whatever", mapFunctionInterpreter, mapFunction);
 
         mapFunctionInterpreter.emitOn(view);
-        mapFunctionInterpreter.interpret(mapFunction, JSONSerializer.toJson(objectWithFoo));
+        mapFunctionInterpreter.interpret(mapFunction, "1", JSONSerializer.toJson(objectWithFoo));
         NavigableMap<IndexKey, IndexEntry> map = view.get(new IndexKey("bar"));
         assertEquals(1, map.size());
-        assertEquals("bar", map.get(new IndexKey("bar")).documentIds().get(0));
+        assertEquals("bar", map.get(new IndexKey("bar")).indexedValues().get(0).getDocId());
     }
 
     public class ObjectWithFoo {

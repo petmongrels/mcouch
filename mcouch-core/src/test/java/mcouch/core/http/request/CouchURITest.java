@@ -15,7 +15,7 @@ public class CouchURITest {
         assertEquals("motech-whp", couchURI.databaseName());
         assertEquals("Patient", couchURI.viewGroup());
         assertEquals("by_patientId", couchURI.viewName());
-        assertEquals("patient1", couchURI.getKey());
+        assertEquals("\"patient1\"", couchURI.getKey());
     }
 
     @Test

@@ -52,4 +52,10 @@ public class SampleRepository extends org.ektorp.support.CouchDbRepositorySuppor
         ViewQuery q = createQuery("by_a_and_a").startKey(startKey).endKey(endKey).inclusiveEnd(true).includeDocs(true);
         return db.queryView(q, SampleEntity.class);
     }
+
+    @View(name = "by_a_custom_data", map = "function(doc) {if (doc.type =='Sample') {emit(doc.a, {a:doc.a, type:doc.type});}}")
+    public List<SampleEntityPart> loadCustomDataStructure(String a) {
+        ViewQuery q = createQuery("by_a_custom_data").key(a);
+        return db.queryView(q, SampleEntityPart.class);
+    }
 }

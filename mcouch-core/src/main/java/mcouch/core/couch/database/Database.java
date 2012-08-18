@@ -1,16 +1,14 @@
 package mcouch.core.couch.database;
 
 import mcouch.core.couch.AllDocuments;
-import mcouch.core.couch.indexing.IndexEntry;
-import mcouch.core.couch.indexing.IndexKey;
-import mcouch.core.couch.indexing.Indexes;
-import mcouch.core.couch.indexing.View;
+import mcouch.core.couch.indexing.*;
 import mcouch.core.couch.indexing.query.IndexQuery;
 import mcouch.core.couch.reducers.Reducer;
 import mcouch.core.couch.view.ViewDefinition;
 import mcouch.core.couch.view.ViewGroup;
 import mcouch.core.couch.view.ViewGroupDefinition;
 import mcouch.core.http.response.SuccessfulDocumentCreateResponse;
+import mcouch.core.http.response.ViewCustomStructureResponse;
 import mcouch.core.http.response.ViewDocumentResponse;
 import mcouch.core.http.response.ViewDocumentsResponse;
 import mcouch.core.jackson.JSONSerializer;
@@ -29,10 +27,12 @@ public class Database {
     public static String ReducedResult = "{\"rows\":[{\"key\":null,\"value\":%s}]}";
 
     private String name;
+    private JavaScriptInterpreter javaScriptInterpreter;
     private final DocumentFunctions documentFunctions;
 
     public Database(String name, MapFunctionInterpreter mapFunctionInterpreter, JavaScriptInterpreter javaScriptInterpreter) {
         this.name = name;
+        this.javaScriptInterpreter = javaScriptInterpreter;
         indexes = new Indexes(mapFunctionInterpreter);
         allDocuments = new AllDocuments(javaScriptInterpreter);
         documentFunctions = new DocumentFunctions(javaScriptInterpreter);
@@ -85,9 +85,14 @@ public class Database {
             ViewDocumentsResponse viewDocumentsResponse = new ViewDocumentsResponse(allDocuments.size(), 0);
             for (IndexKey indexKey : map.keySet()) {
                 IndexEntry indexEntry = map.get(indexKey);
-                for (String documentId : indexEntry.documentIds()) {
-                    ViewDocumentResponse viewDocumentResponse = new ViewDocumentResponse(documentId, indexKey.indexedValue(), documentId, allDocuments.get(documentId));
-                    viewDocumentsResponse.add(viewDocumentResponse);
+                for (IndexValue indexValue : indexEntry.indexedValues()) {
+                    if (indexValue.isDocId()) {
+                        ViewDocumentResponse viewDocumentResponse = new ViewDocumentResponse(indexValue.getDocId(), indexKey.value(), indexValue.getDocId(), allDocuments.get(indexValue.getDocId()));
+                        viewDocumentsResponse.add(viewDocumentResponse);
+                    } else {
+                        ViewCustomStructureResponse viewCustomStructureResponse = new ViewCustomStructureResponse(indexValue.getDocId(), indexKey.value(), javaScriptInterpreter.stringiFy(indexValue.getObject()));
+                        viewDocumentsResponse.add(viewCustomStructureResponse);
+                    }
                 }
             }
             return JSONSerializer.toJson(viewDocumentsResponse);

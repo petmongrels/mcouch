@@ -7,15 +7,18 @@ import mcouch.core.couch.indexing.query.IndexQueryFactory;
 import mcouch.core.couch.view.ViewGroupDefinition;
 import mcouch.core.http.NotImplementedException;
 import mcouch.core.http.StandardHttpResponse;
+import mcouch.core.rhino.JavaScriptInterpreter;
 import org.apache.http.HttpResponse;
 import org.apache.log4j.Logger;
 
 public class CouchGetRequest implements CouchRequest {
     private CouchURI uri;
+    private JavaScriptInterpreter javaScriptInterpreter;
     private static Logger logger = Logger.getLogger(CouchGetRequest.class);
 
-    public CouchGetRequest(CouchURI uri) {
+    public CouchGetRequest(CouchURI uri, JavaScriptInterpreter javaScriptInterpreter) {
         this.uri = uri;
+        this.javaScriptInterpreter = javaScriptInterpreter;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class CouchGetRequest implements CouchRequest {
             return StandardHttpResponse.okWith(database.get(uri.documentId()));
         }
         if (uri.isAllDocsRequest() || uri.isExecuteViewRequest()) {
-            IndexQuery indexQuery = IndexQueryFactory.create(uri);
+            IndexQuery indexQuery = IndexQueryFactory.create(uri, javaScriptInterpreter);
             String response = database.executeView(uri.viewGroup(), uri.viewName(), indexQuery, uri.isReduce());
             logger.info(response);
             return StandardHttpResponse.okWith(response);

@@ -23,12 +23,12 @@ public class IndexKey {
         return indexedValue.hashCode();
     }
 
-    public String indexedValue() {
+    public String value() {
         return indexedValue;
     }
 
     @Override
     public String toString() {
-        return "indexedValue=" + indexedValue;
+        return "value=" + indexedValue;
     }
 }

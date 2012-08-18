@@ -36,7 +36,7 @@ public class View implements DocumentIterator {
 
     @Override
     public void iterate(String id, String document) {
-        mapFunctionInterpreter.interpret(mapFunction, document);
+        mapFunctionInterpreter.interpret(mapFunction, id, document);
     }
 
     public void build(AllDocuments allDocuments) {
@@ -44,12 +44,12 @@ public class View implements DocumentIterator {
         allDocuments.doForAllDocuments(this);
     }
 
-    public void addOrUpdate(String indexValue, String docId) {
+    public void addOrUpdate(String indexValue, Object object, String docId) {
         IndexKey indexKey = IndexKeyFactory.create(indexValue);
         IndexEntry indexEntry = treeMap.get(indexKey);
-        if (indexEntry == null) treeMap.put(indexKey, new IndexEntry(docId));
+        if (indexEntry == null) treeMap.put(indexKey, new IndexEntry(object, docId));
         else
-            indexEntry.append(docId);
+            indexEntry.append(object, docId);
     }
 
     public NavigableMap<IndexKey, IndexEntry> get(IndexKey indexKey) {

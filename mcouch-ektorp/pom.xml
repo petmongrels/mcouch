@@ -38,10 +38,5 @@
             <artifactId>org.ektorp.spring</artifactId>
             <version>1.2.2</version>
         </dependency>
-        <dependency>
-            <groupId>rhino</groupId>
-            <artifactId>js</artifactId>
-            <version>1.7R2</version>
-        </dependency>
     </dependencies>
 </project>

@@ -2,6 +2,7 @@ package mcouch.core.integration;
 
 import mcouch.testapp.AnotherSampleEntity;
 import mcouch.testapp.SampleEntity;
+import mcouch.testapp.SampleEntityPart;
 import mcouch.testapp.SampleRepository;
 import org.ektorp.BulkDeleteDocument;
 import org.ektorp.impl.StdCouchDbConnector;
@@ -16,12 +17,14 @@ import static junit.framework.Assert.assertEquals;
 
 public class DocumentLevelAPITest {
     private StdCouchDbConnector dbConnector;
+    private SampleRepository sampleRepository;
 
     @Before
     public void setup() throws Exception {
         dbConnector = InMemoryCouchDbInstanceFactoryForTest.create("fooDb");
 //        dbConnector = CouchDbInstanceFactoryForTest.create("foodb");
         dbConnector.create(new AnotherSampleEntity());
+        sampleRepository = new SampleRepository(dbConnector);
     }
 
     @Test
@@ -39,7 +42,7 @@ public class DocumentLevelAPITest {
 
     @Test
     public void findDocuments() {
-        SampleRepository sampleRepository = new SampleRepository(dbConnector);
+
         dbConnector.create(new SampleEntity("anything"));
         dbConnector.create(new SampleEntity("something"));
         List<SampleEntity> list = sampleRepository.findByA("anything");
@@ -48,7 +51,7 @@ public class DocumentLevelAPITest {
 
     @Test
     public void findDocumentsByComplexKey() {
-        SampleRepository sampleRepository = new SampleRepository(dbConnector);
+
         dbConnector.create(new SampleEntity("anything"));
         dbConnector.create(new SampleEntity("something"));
         List<SampleEntity> list = sampleRepository.findByAInRange("anything", "dfd");
@@ -57,7 +60,6 @@ public class DocumentLevelAPITest {
 
     @Test
     public void numberOfDocumentsUsingReduceFunction() {
-        SampleRepository sampleRepository = new SampleRepository(dbConnector);
         dbConnector.create(new SampleEntity("anything"));
         dbConnector.create(new SampleEntity("something"));
         int count = sampleRepository.numberOfItemsInRange("anything", "dfd");
@@ -66,7 +68,6 @@ public class DocumentLevelAPITest {
 
     @Test
     public void findByAWithoutReduce() {
-        SampleRepository sampleRepository = new SampleRepository(dbConnector);
         dbConnector.create(new SampleEntity("anything"));
         dbConnector.create(new SampleEntity("something"));
         List<SampleEntity> list = sampleRepository.findByAWithoutReduce("anything");
@@ -75,7 +76,6 @@ public class DocumentLevelAPITest {
 
     @Test
     public void getAll() {
-        SampleRepository sampleRepository = new SampleRepository(dbConnector);
         dbConnector.create(new SampleEntity("anything"));
         dbConnector.create(new SampleEntity("something"));
         List<SampleEntity> list = sampleRepository.getAll();
@@ -96,7 +96,6 @@ public class DocumentLevelAPITest {
 
     @Test
     public void delete() {
-        SampleRepository sampleRepository = new SampleRepository(dbConnector);
         SampleEntity anything = new SampleEntity("anything");
         dbConnector.create(anything);
         assertEquals(1, sampleRepository.getAll().size());
@@ -106,9 +105,16 @@ public class DocumentLevelAPITest {
 
     @Test
     public void findInARange() {
-        SampleRepository sampleRepository = new SampleRepository(dbConnector);
         dbConnector.create(new SampleEntity("anything"));
         dbConnector.create(new SampleEntity("something"));
         assertEquals(1, sampleRepository.findUsingTwoEmittedValues("anything").size());
+    }
+
+    @Test
+    public void customQueryWhichDoesntReturnADoc() {
+        dbConnector.create(new SampleEntity("anything"));
+        dbConnector.create(new SampleEntity("something"));
+        List<SampleEntityPart> list = sampleRepository.loadCustomDataStructure("anything");
+        assertEquals(1, list.size());
     }
 }

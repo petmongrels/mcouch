@@ -18,7 +18,7 @@ public class NullIndexKey extends IndexKey {
     }
 
     @Override
-    public String indexedValue() {
+    public String value() {
         return null;
     }
 
