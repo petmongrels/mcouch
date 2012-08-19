@@ -4,8 +4,10 @@ import mcouch.core.couch.database.Database;
 import mcouch.core.couch.database.Databases;
 import mcouch.core.http.StandardHttpResponse;
 import mcouch.core.http.request.body.BulkRequest;
+import mcouch.core.http.request.body.BulkRequestDoc;
 import mcouch.core.http.request.body.CouchRequestBody;
-import mcouch.core.http.request.body.EnclosedRequest;
+import mcouch.core.http.request.bulk.BulkItemRequest;
+import mcouch.core.http.request.bulk.BulkRequestItemFactory;
 import mcouch.core.http.response.EnclosedResponseForBulkRequest;
 import mcouch.core.http.response.SuccessfulDocumentCreateResponse;
 import mcouch.core.jackson.JSONSerializer;
@@ -34,9 +36,9 @@ public class CouchPostRequest implements CouchRequest {
         if (uri.isBulkDocsRequest()) {
             BulkRequest bulkRequest = JSONSerializer.fromJson(submittedJSON, BulkRequest.class);
             ArrayList<EnclosedResponseForBulkRequest> response = new ArrayList<>(bulkRequest.docs.size());
-            for (EnclosedRequest enclosedRequest : bulkRequest.docs) {
-                database.delete(enclosedRequest._id);
-                EnclosedResponseForBulkRequest enclosedResponseForBulkRequest = new EnclosedResponseForBulkRequest(enclosedRequest._id, enclosedRequest._rev);
+            for (BulkRequestDoc bulkRequestDoc : bulkRequest.docs) {
+                BulkItemRequest bulkItemRequest = BulkRequestItemFactory.create(bulkRequestDoc.json);
+                EnclosedResponseForBulkRequest enclosedResponseForBulkRequest = bulkItemRequest.execute(database);
                 response.add(enclosedResponseForBulkRequest);
             }
             return StandardHttpResponse.okWith(JSONSerializer.toJson(response));

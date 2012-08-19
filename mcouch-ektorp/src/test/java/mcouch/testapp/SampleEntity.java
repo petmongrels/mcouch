@@ -1,5 +1,6 @@
 package mcouch.testapp;
 
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.ektorp.support.CouchDbDocument;
 import org.ektorp.support.TypeDiscriminator;
 
@@ -7,6 +8,8 @@ import org.ektorp.support.TypeDiscriminator;
 public class SampleEntity extends CouchDbDocument {
     private String type = "Sample";
     private String a;
+    @JsonProperty
+    private int x = 10;
 
     public SampleEntity() {
     }

@@ -117,4 +117,13 @@ public class DocumentLevelAPITest {
         List<SampleEntityPart> list = sampleRepository.loadCustomDataStructure("anything");
         assertEquals(1, list.size());
     }
+
+    @Test
+    public void bulkPost() {
+        ArrayList<SampleEntity> sampleEntities = new ArrayList<>();
+        sampleEntities.add(new SampleEntity("anything"));
+        sampleEntities.add(new SampleEntity("something"));
+        dbConnector.executeAllOrNothing(sampleEntities);
+        assertEquals(2, sampleRepository.getAll().size());
+    }
 }
