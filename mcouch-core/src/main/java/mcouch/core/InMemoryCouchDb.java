@@ -28,8 +28,11 @@ public class InMemoryCouchDb implements HttpClient {
     private CouchHttpRequestFactory couchHttpRequestFactory;
 
     public InMemoryCouchDb() {
-        JavaScriptInterpreter javaScriptInterpreter = new JavaScriptInterpreter();
-        this.databases = new Databases(javaScriptInterpreter, new MapFunctionInterpreter(javaScriptInterpreter));
+        this(JavaScriptInterpreter.Instance, MapFunctionInterpreter.Instance);
+    }
+
+    public InMemoryCouchDb(JavaScriptInterpreter javaScriptInterpreter, MapFunctionInterpreter mapFunctionInterpreter) {
+        this.databases = new Databases(javaScriptInterpreter, mapFunctionInterpreter);
         this.couchHttpRequestFactory = new CouchHttpRequestFactory(javaScriptInterpreter);
     }
 

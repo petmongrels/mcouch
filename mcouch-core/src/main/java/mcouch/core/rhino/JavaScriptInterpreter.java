@@ -8,7 +8,9 @@ public class JavaScriptInterpreter {
     private Context context;
     private ScriptableObject scope;
 
-    public JavaScriptInterpreter() {
+    public static JavaScriptInterpreter Instance = new JavaScriptInterpreter();
+
+    private JavaScriptInterpreter() {
         context = Context.enter();
         scope = context.initStandardObjects();
     }

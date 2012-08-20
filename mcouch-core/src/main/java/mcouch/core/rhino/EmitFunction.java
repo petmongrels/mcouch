@@ -2,11 +2,9 @@ package mcouch.core.rhino;
 
 import mcouch.core.couch.indexing.IndexEntry;
 import mcouch.core.couch.indexing.View;
-import org.codehaus.jackson.map.ObjectMapper;
 
 public class EmitFunction {
     private View view;
-    private final static ObjectMapper mapper = new ObjectMapper();
     public static final String EMIT_FUNCTION = "function emit(one, two){if (two) return javaEmitFunction.emit(one, two); return javaEmitFunction.emit(one)}";
     private String docId;
 

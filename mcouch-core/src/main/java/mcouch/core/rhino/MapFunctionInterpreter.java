@@ -6,7 +6,9 @@ public class MapFunctionInterpreter {
     private EmitFunction emitFunction;
     private final JavaScriptInterpreter javaScriptInterpreter;
 
-    public MapFunctionInterpreter(JavaScriptInterpreter javaScriptInterpreter) {
+    public static MapFunctionInterpreter Instance = new MapFunctionInterpreter(JavaScriptInterpreter.Instance);
+
+    private MapFunctionInterpreter(JavaScriptInterpreter javaScriptInterpreter) {
         emitFunction = new EmitFunction();
         this.javaScriptInterpreter = javaScriptInterpreter;
         javaScriptInterpreter.defineLink(emitFunction, "javaEmitFunction");
