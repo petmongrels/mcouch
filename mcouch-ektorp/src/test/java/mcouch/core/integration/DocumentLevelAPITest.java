@@ -126,4 +126,17 @@ public class DocumentLevelAPITest {
         dbConnector.executeAllOrNothing(sampleEntities);
         assertEquals(2, sampleRepository.getAll().size());
     }
+
+    @Test
+    public void bulkPostShouldUpdateOrAdd() {
+        SampleEntity anything = new SampleEntity("anything");
+        dbConnector.create(anything);
+        assertEquals(1, sampleRepository.getAll().size());
+
+        anything.setA("anythingUpdated");
+        ArrayList<SampleEntity> sampleEntities = new ArrayList<>();
+        sampleEntities.add(anything);
+        dbConnector.executeAllOrNothing(sampleEntities);
+        assertEquals(1, sampleRepository.getAll().size());
+    }
 }

@@ -12,7 +12,7 @@ import java.io.IOException;
 public class BulkRequestDocSerializer extends JsonDeserializer<BulkRequestDoc> {
     @Override
     public BulkRequestDoc deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        JsonNode jsonNode = new JsonNodeDeserializer().deserialize(jp, ctxt);
+        JsonNode jsonNode = JsonNodeDeserializer.instance.deserialize(jp, ctxt);
         return new BulkRequestDoc(jsonNode.toString());
     }
 }

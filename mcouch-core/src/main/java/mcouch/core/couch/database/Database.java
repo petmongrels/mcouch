@@ -118,4 +118,8 @@ public class Database {
     public void delete(String id) {
         allDocuments.remove(id);
     }
+
+    public void addOrUpdate(String document) {
+        allDocuments.addOrUpdate(document);
+    }
 }

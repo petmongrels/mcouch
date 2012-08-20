@@ -51,10 +51,26 @@ public class AllDocuments {
     }
 
     public SuccessfulDocumentCreateResponse update(String document) {
-        String documentId = documentFunctions.getDocumentId(document);
+        String documentId = documentId(document);
+        return update(documentId, document);
+    }
+
+    private SuccessfulDocumentCreateResponse update(String documentId, String document) {
         String newRevision = UUID.randomUUID().toString();
         String updatedDocument = documentFunctions.updateExistingDocument(document, newRevision);
         all.put(documentId, updatedDocument);
         return new SuccessfulDocumentCreateResponse(documentId, newRevision);
+    }
+
+    private String documentId(String document) {
+        return documentFunctions.getDocumentId(document);
+    }
+
+    public void addOrUpdate(String document) {
+        String documentId = documentId(document);
+        if (documentId == null || !all.containsKey(documentId))
+            add(document);
+        else
+            update(documentId, document);
     }
 }

@@ -12,7 +12,7 @@ public class BulkPostItemRequest implements BulkItemRequest {
 
     @Override
     public EnclosedResponseForBulkRequest execute(Database database) {
-        database.addDocument(json);
+        database.addOrUpdate(json);
         return null;
     }
 }
