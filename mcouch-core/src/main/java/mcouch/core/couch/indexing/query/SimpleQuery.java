@@ -4,7 +4,7 @@ import mcouch.core.couch.indexing.IndexEntry;
 import mcouch.core.couch.indexing.IndexKey;
 import mcouch.core.couch.indexing.View;
 
-import java.util.NavigableMap;
+import java.util.Map;
 
 public class SimpleQuery implements IndexQuery {
     private final IndexKey indexKey;
@@ -14,7 +14,7 @@ public class SimpleQuery implements IndexQuery {
     }
 
     @Override
-    public NavigableMap<IndexKey, IndexEntry> execute(View view) {
+    public Map<IndexKey, IndexEntry> execute(View view) {
         return view.get(indexKey);
     }
 }

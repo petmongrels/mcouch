@@ -7,6 +7,7 @@ import mcouch.core.couch.reducers.Reducer;
 import mcouch.core.couch.view.ViewDefinition;
 import mcouch.core.couch.view.ViewGroup;
 import mcouch.core.couch.view.ViewGroupDefinition;
+import mcouch.core.http.request.Page;
 import mcouch.core.http.response.SuccessfulDocumentCreateResponse;
 import mcouch.core.http.response.ViewCustomStructureResponse;
 import mcouch.core.http.response.ViewDocumentResponse;
@@ -18,7 +19,6 @@ import mcouch.core.rhino.MapFunctionInterpreter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NavigableMap;
 
 public class Database {
     private AllDocuments allDocuments;
@@ -71,21 +71,27 @@ public class Database {
         return viewGroups.get(name);
     }
 
-    public String executeView(String viewGroupName, String viewName, IndexQuery indexQuery, boolean doReduce) {
+    public String executeView(String viewGroupName, String viewName, IndexQuery indexQuery, boolean doReduce, Page page) {
         ViewGroup viewGroup = viewGroup(viewGroupName);
         ViewGroupDefinition viewGroupDefinition = viewGroup.definition();
         ViewDefinition viewDefinition = viewGroupDefinition.getView(viewName);
         View view = indexes.buildIndex(viewName, viewDefinition.map, allDocuments);
 
-        NavigableMap<IndexKey, IndexEntry> map = indexQuery.execute(view);
+        Map<IndexKey, IndexEntry> map = indexQuery.execute(view);
         Reducer reducer = viewDefinition.reducer();
         if (doReduce && reducer != null) {
             return String.format(ReducedResult, reducer.reduce(map));
         } else {
             ViewDocumentsResponse viewDocumentsResponse = new ViewDocumentsResponse(allDocuments.size(), 0);
+            int i = 0;
             for (IndexKey indexKey : map.keySet()) {
                 IndexEntry indexEntry = map.get(indexKey);
                 for (IndexValue indexValue : indexEntry.indexedValues()) {
+                    if (page.fallsOutOf(i)) {
+                        i++;
+                        continue;
+                    }
+
                     if (indexValue.isDocId()) {
                         ViewDocumentResponse viewDocumentResponse = new ViewDocumentResponse(indexValue.getDocId(), indexKey.value(), indexValue.getDocId(), allDocuments.get(indexValue.getDocId()));
                         viewDocumentsResponse.add(viewDocumentResponse);
@@ -93,6 +99,7 @@ public class Database {
                         ViewCustomStructureResponse viewCustomStructureResponse = new ViewCustomStructureResponse(indexValue.getDocId(), indexKey.value(), javaScriptInterpreter.stringiFy(indexValue.getObject()));
                         viewDocumentsResponse.add(viewCustomStructureResponse);
                     }
+                    i++;
                 }
             }
             return JSONSerializer.toJson(viewDocumentsResponse);

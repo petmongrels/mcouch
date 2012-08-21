@@ -4,11 +4,11 @@ import mcouch.core.couch.indexing.IndexEntry;
 import mcouch.core.couch.indexing.IndexKey;
 import mcouch.core.couch.indexing.View;
 
-import java.util.NavigableMap;
+import java.util.Map;
 
 public class AllQuery implements IndexQuery {
     @Override
-    public NavigableMap<IndexKey, IndexEntry> execute(View view) {
+    public Map<IndexKey, IndexEntry> execute(View view) {
         return view.all();
     }
 }

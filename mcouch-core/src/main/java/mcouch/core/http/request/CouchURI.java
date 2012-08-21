@@ -20,6 +20,10 @@ public class CouchURI {
     private boolean reduce = true;
     private boolean allDocs;
     private String rev;
+    private int limit = limitNotSpecified;
+    private int skip;
+
+    private static final int limitNotSpecified = -1;
 
     public CouchURI(URI uri) {
         String uriPath = uri.getPath();
@@ -62,6 +66,12 @@ public class CouchURI {
                     break;
                 case "rev":
                     rev = value;
+                    break;
+                case "limit":
+                    limit = Integer.parseInt(value);
+                    break;
+                case "skip":
+                    skip = Integer.parseInt(value);
                     break;
             }
         }
@@ -125,5 +135,15 @@ public class CouchURI {
 
     public String getRev() {
         return rev;
+    }
+
+    private boolean isPaged() {
+        return limit != limitNotSpecified;
+    }
+
+    public Page page() {
+        if (isPaged())
+            return new Page(skip, limit);
+        return NullPage.Instance;
     }
 }

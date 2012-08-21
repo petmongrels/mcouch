@@ -139,4 +139,12 @@ public class DocumentLevelAPITest {
         dbConnector.executeAllOrNothing(sampleEntities);
         assertEquals(1, sampleRepository.getAll().size());
     }
+
+    @Test
+    public void getDocumentsByPage() {
+        dbConnector.create(new SampleEntity("anything"));
+        dbConnector.create(new SampleEntity("something"));
+        assertEquals(1, sampleRepository.getAllByPage(0).size());
+        assertEquals(1, sampleRepository.getAllByPage(1).size());
+    }
 }

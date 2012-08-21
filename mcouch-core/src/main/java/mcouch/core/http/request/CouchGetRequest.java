@@ -36,8 +36,9 @@ public class CouchGetRequest implements CouchRequest {
         }
         if (uri.isAllDocsRequest() || uri.isExecuteViewRequest()) {
             IndexQuery indexQuery = IndexQueryFactory.create(uri, javaScriptInterpreter);
-            String response = database.executeView(uri.viewGroup(), uri.viewName(), indexQuery, uri.isReduce());
-            logger.info(response);
+            Page page = uri.page();
+            String response = database.executeView(uri.viewGroup(), uri.viewName(), indexQuery, uri.isReduce(), page);
+            if (logger.isDebugEnabled()) logger.debug(response);
             return StandardHttpResponse.okWith(response);
         }
         return null;

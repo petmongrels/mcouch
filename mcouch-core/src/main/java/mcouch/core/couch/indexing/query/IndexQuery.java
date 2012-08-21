@@ -4,8 +4,8 @@ import mcouch.core.couch.indexing.IndexEntry;
 import mcouch.core.couch.indexing.IndexKey;
 import mcouch.core.couch.indexing.View;
 
-import java.util.NavigableMap;
+import java.util.Map;
 
 public interface IndexQuery {
-    NavigableMap<IndexKey, IndexEntry> execute(View view);
+    Map<IndexKey, IndexEntry> execute(View view);
 }

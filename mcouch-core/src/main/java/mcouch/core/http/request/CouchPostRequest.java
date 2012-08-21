@@ -13,10 +13,12 @@ import mcouch.core.http.response.SuccessfulDocumentCreateResponse;
 import mcouch.core.jackson.JSONSerializer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 
 public class CouchPostRequest implements CouchRequest {
+    private static Logger logger = Logger.getLogger(CouchPostRequest.class);
     private HttpPost request;
     private CouchURI uri;
 
@@ -30,6 +32,7 @@ public class CouchPostRequest implements CouchRequest {
         CouchRequestBody couchRequestBody = new CouchRequestBody(request);
         Database database = databases.getDatabase(uri.databaseName());
         String submittedJSON = couchRequestBody.submittedJSON();
+        if (logger.isDebugEnabled()) logger.debug(String.format("Submitted JSON %s", submittedJSON));
         if (submittedJSON == null || database == null)
             throw new AssertionError();
 

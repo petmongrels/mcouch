@@ -58,4 +58,9 @@ public class SampleRepository extends org.ektorp.support.CouchDbRepositorySuppor
         ViewQuery q = createQuery("by_a_custom_data").key(a);
         return db.queryView(q, SampleEntityPart.class);
     }
+
+    public List<SampleEntity> getAllByPage(int pageNumber) {
+        ViewQuery q = createQuery("all").skip(pageNumber).limit(1).inclusiveEnd(true);
+        return db.queryView(q, SampleEntity.class);
+    }
 }
