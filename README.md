@@ -12,6 +12,6 @@ Does not implement.
 - Document conflict checks
 - Custom reducers
 
-It uses Rhino to interpret the Java script map functions.
-It uses Jackson for JSON parsing.
-Based on stubbing of Apache Commons HTTP client.
+It uses Rhino to interpret the Java script map functions. It uses Jackson for JSON parsing. Based on stubbing of Apache Commons HTTP client.
+
+public class InMemoryCouchDb implements HttpClient
